@@ -1,0 +1,9 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "twp-editor-plugin": {
+      "description": "A blank schematic.",
+      "factory": "./twp-editor-plugin/index#twpEditorPlugin"
+    }
+  }
+}

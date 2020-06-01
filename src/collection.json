@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "twp-editor-plugin": {
-      "description": "A blank schematic.",
+      "description": "Schematic to scaffold a new TWP Editor plugin",
       "factory": "./twp-editor-plugin/index#twpEditorPlugin"
     }
   }

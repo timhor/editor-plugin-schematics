@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsTwpEditorPlugin",
+  "title": "TWP  Editor Plugin Options Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "x-prompt": "Plugin name:"
+    },
+    "usePluginState": {
+      "type": "boolean",
+      "default": "true",
+      "x-prompt": "Use plugin state?"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

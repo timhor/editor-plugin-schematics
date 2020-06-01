@@ -4,6 +4,7 @@
   "description": "Schematics to automate scaffolding of new Editor plugins",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
     "test": "npm run build && jasmine src/**/*_spec.js"
   },
   "keywords": [

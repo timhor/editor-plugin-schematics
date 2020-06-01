@@ -3,7 +3,8 @@
   "schematics": {
     "twp-editor-plugin": {
       "description": "Schematic to scaffold a new TWP Editor plugin",
-      "factory": "./twp-editor-plugin/index#twpEditorPlugin"
+      "factory": "./twp-editor-plugin/index#twpEditorPlugin",
+      "schema": "./twp-editor-plugin/schema.json"
     }
   }
 }

@@ -19,8 +19,22 @@
     "typescript": "~3.8.2"
   },
   "devDependencies": {
-    "@types/node": "^12.11.1",
     "@types/jasmine": "~3.5.0",
-    "jasmine": "^3.5.0"
+    "@types/node": "^12.11.1",
+    "husky": "^4.2.5",
+    "jasmine": "^3.5.0",
+    "lint-staged": "^10.2.7",
+    "prettier": "^2.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,html,css,md,json}": "prettier --write"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

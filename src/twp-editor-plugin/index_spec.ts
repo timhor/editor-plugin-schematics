@@ -147,6 +147,53 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('reducer.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/reducer.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/reducer.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/reducer.ts`
+          );
+          expect(fileContent).toContain(
+            "import { NicePluginState } from './types'"
+          );
+          expect(fileContent).toContain(
+            "import { NiceActionTypes, NiceAction } from './actions'"
+          );
+        });
+
+        it('exports reducer function', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/reducer.ts`
+          );
+          expect(fileContent).toContain(
+            'export function reducer(state: NicePluginState, action: NiceAction): NicePluginState {' +
+              '\n  switch(action.type) {' +
+              '\n    default: return state;' +
+              '\n  }' +
+              '\n}'
+          );
+        });
+      });
+    });
+  });
+
   describe('pm-plugins/main.ts', () => {
     it('generates file', () => {
       const tree = runSchematic('nice', true);

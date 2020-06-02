@@ -17,7 +17,9 @@ import { normalize } from 'path';
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     console.log({ options });
-    const pluginPath = normalize(`./${options.name}`);
+    const pluginPath = normalize(
+      `packages/editor/editor-core/src/plugins/${options.name}`
+    );
     const templateSource = apply(url('./templates'), [
       template({ ...options }),
       move(pluginPath),

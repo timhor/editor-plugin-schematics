@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "tsconfig",
     "lib": ["es2018", "dom"],
-    "declaration": true,
+    "declaration": false,
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": true,
@@ -14,10 +14,10 @@
     "rootDir": "src/",
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "strictNullChecks": true,
     "target": "es6",
-    "types": ["jasmine", "node"]
+    "types": ["jest", "node"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/*/templates/**/*"]

@@ -5,8 +5,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
-    "test": "npm run build && jest",
-    "test:watch": "npm run test -- --watch"
+    "test": "npm run build && jest"
   },
   "keywords": [
     "schematics"

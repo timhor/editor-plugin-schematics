@@ -69,6 +69,24 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('commands.ts', () => {
+    it('generates file', () => {
+      expect(runSchematic('nice').files).toContain(
+        `${pluginBasePath}/nice/commands.ts`
+      );
+    });
+
+    describe('when no plugin state', () => {
+      it('generates file with no content', () => {
+        const tree = runSchematic('nice');
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/commands.ts`
+        );
+        expect(fileContent).toEqual('');
+      });
+    });
+  });
+
   describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
       expect(runSchematic('my awesome').files).toContain(

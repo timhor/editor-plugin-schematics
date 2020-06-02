@@ -101,6 +101,27 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('pm-plugins/main.ts', () => {
+    it('generates file', () => {
+      const tree = runSchematic('nice', true);
+      expect(tree.files).toContain(`${pluginBasePath}/nice/pm-plugins/main.ts`);
+      const fileContent = tree.readContent(
+        `${pluginBasePath}/nice/pm-plugins/main.ts`
+      );
+      expect(fileContent.includes('createPluginState')).toBeTruthy();
+    });
+
+    describe('when no plugin state', () => {
+      it('generates file without createPluginState', () => {
+        const tree = runSchematic('nice');
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/pm-plugins/main.ts`
+        );
+        expect(fileContent.includes('createPluginState')).toBeFalsy();
+      });
+    });
+  });
+
   describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
       expect(runSchematic('my awesome').files).toContain(

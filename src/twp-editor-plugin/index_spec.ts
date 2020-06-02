@@ -123,7 +123,11 @@ describe('twp-editor-plugin', () => {
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/actions.ts`
           );
-          expect(fileContent).toContain('export enum NiceActionTypes {\n}');
+          expect(fileContent).toContain(
+            'export enum NiceActionTypes {' +
+              "\n  SOME_ACTION = 'SOME_ACTION'" +
+              '\n}'
+          );
         });
 
         it('adds placeholder action', () => {
@@ -131,7 +135,11 @@ describe('twp-editor-plugin', () => {
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/actions.ts`
           );
-          expect(fileContent).toContain('export interface SomeNiceAction {\n}');
+          expect(fileContent).toContain(
+            'export interface SomeNiceAction {' +
+              '\n  type: NiceActionTypes.SOME_ACTION' +
+              '\n}'
+          );
         });
 
         it('exports action type', () => {

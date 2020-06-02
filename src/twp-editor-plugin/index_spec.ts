@@ -4,9 +4,9 @@ import {
   UnitTestTree,
 } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
+import { pluginBasePath } from './index';
 
 const collectionPath = path.join(__dirname, '../collection.json');
-const pluginBasePath = '/packages/editor/editor-core/src/plugins';
 
 describe('twp-editor-plugin', () => {
   const runSchematic = (name: string, usePluginState = false): UnitTestTree => {

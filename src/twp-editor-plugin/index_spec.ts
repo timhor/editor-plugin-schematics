@@ -23,4 +23,18 @@ describe('twp-editor-plugin', () => {
       '/packages/editor/editor-core/src/plugins/plugin/index.tsx'
     );
   });
+
+  describe('formatting plugin name', () => {
+    it('formats name with spaces', () => {
+      expect(runSchematic('my awesome plugin').files).toContain(
+        '/packages/editor/editor-core/src/plugins/my-awesome-plugin/index.tsx'
+      );
+    });
+
+    it('formats name with camel case', () => {
+      expect(runSchematic('MyAwesomePlugin').files).toContain(
+        '/packages/editor/editor-core/src/plugins/my-awesome-plugin/index.tsx'
+      );
+    });
+  });
 });

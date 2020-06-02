@@ -6,6 +6,7 @@ import {
 import * as path from 'path';
 
 const collectionPath = path.join(__dirname, '../collection.json');
+const pluginBasePath = '/packages/editor/editor-core/src/plugins';
 
 describe('twp-editor-plugin', () => {
   const runSchematic = (name: string, usePluginState = false): UnitTestTree => {
@@ -18,22 +19,58 @@ describe('twp-editor-plugin', () => {
     return tree;
   };
 
-  it('generates index file', () => {
-    expect(runSchematic('plugin').files).toContain(
-      '/packages/editor/editor-core/src/plugins/plugin/index.tsx'
+  it('generates index.tsx file', () => {
+    expect(runSchematic('nice').files).toContain(
+      `${pluginBasePath}/nice/index.tsx`
     );
   });
 
-  describe('formatting plugin name', () => {
+  describe('plugin-key.ts', () => {
+    it('generates file', () => {
+      expect(runSchematic('nice').files).toContain(
+        `${pluginBasePath}/nice/plugin-key.ts`
+      );
+    });
+
+    describe('exporting plugin key', () => {
+      it('exports plugin key correctly', () => {
+        const tree = runSchematic('nice');
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/plugin-key.ts`
+        );
+        expect(fileContent).toContain(
+          `export const pluginKey = new PluginKey('nicePlugin')`
+        );
+      });
+
+      it('exports plugin key correctly when plugin name has spaces', () => {
+        const tree = runSchematic('something great');
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/something-great/plugin-key.ts`
+        );
+        expect(fileContent).toContain(
+          `export const pluginKey = new PluginKey('somethingGreatPlugin')`
+        );
+      });
+    });
+  });
+
+  describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
-      expect(runSchematic('my awesome plugin').files).toContain(
-        '/packages/editor/editor-core/src/plugins/my-awesome-plugin/index.tsx'
+      expect(runSchematic('my awesome').files).toContain(
+        `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
 
     it('formats name with camel case', () => {
-      expect(runSchematic('MyAwesomePlugin').files).toContain(
-        '/packages/editor/editor-core/src/plugins/my-awesome-plugin/index.tsx'
+      expect(runSchematic('MyAwesome').files).toContain(
+        `${pluginBasePath}/my-awesome/index.tsx`
+      );
+    });
+
+    it('strips off final word "plugin" if passed in', () => {
+      expect(runSchematic('my awesome plugin').files).toContain(
+        `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
   });

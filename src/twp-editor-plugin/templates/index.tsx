@@ -2,13 +2,13 @@ import * as React from 'react';
 import { EditorPlugin } from '../../types';
 import { createPlugin } from './pm-plugins/main';
 
-const myNewPlugin = (): EditorPlugin => ({
-  name: 'myNewPlugin',
+const <%= name %> = (): EditorPlugin => ({
+  name: '<%= name %>',
 
   pmPlugins() {
     return [
       {
-        name: 'myNewPlugin',
+        name: '<%= name %>',
         plugin: (options) => createPlugin(options),
       },
     ];
@@ -26,4 +26,4 @@ const myNewPlugin = (): EditorPlugin => ({
   },
 });
 
-export default myNewPlugin;
+export default <%= name %>;

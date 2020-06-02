@@ -8,7 +8,9 @@ import {
   move,
   MergeStrategy,
   mergeWith,
+  chain,
 } from '@angular-devkit/schematics';
+import { strings } from '@angular-devkit/core';
 import { TwpEditorPluginOptions } from './types';
 import { normalize } from 'path';
 
@@ -37,19 +39,33 @@ export const pluginBasePath = '/packages/editor/editor-core/src/plugins';
 // per file.
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const { name } = options;
+    const { name, usePluginState } = options;
     const formattedName = {
       kebab: kebabCasePluginName(name),
       camel: camelCasePluginName(name),
     };
 
     const pluginPath = normalize(`${pluginBasePath}/${formattedName.kebab}`);
-    const templateSource = apply(url('./templates'), [
+
+    const rules: Rule[] = [];
+
+    const templateSource = apply(url('./files/templates'), [
       template({ ...options, formattedName }),
       move(pluginPath),
     ]);
-    createTestFolders(tree, pluginPath);
     const merge = mergeWith(templateSource, MergeStrategy.Error);
-    return merge(tree, context);
+    rules.push(merge);
+
+    createTestFolders(tree, pluginPath);
+
+    if (usePluginState) {
+      const pluginStateTemplateSource = apply(
+        url('./files/plugin-state-templates'),
+        [template({ ...options, ...strings }), move(pluginPath)]
+      );
+      rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
+    }
+
+    return chain(rules)(tree, context);
   };
 }

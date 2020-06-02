@@ -101,6 +101,52 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('actions.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/actions.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/actions.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('adds actions enum', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain('export enum NiceActionTypes {\n}');
+        });
+
+        it('adds placeholder action', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain('export interface SomeNiceAction {\n}');
+        });
+
+        it('exports action type', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain(
+            'export type NiceAction = SomeNiceAction'
+          );
+        });
+      });
+    });
+  });
+
   describe('pm-plugins/main.ts', () => {
     it('generates file', () => {
       const tree = runSchematic('nice', true);

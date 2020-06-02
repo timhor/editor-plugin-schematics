@@ -20,5 +20,5 @@
     "types": ["jest", "node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["src/*/templates/**/*"]
+  "exclude": ["src/*/files/**/*"]
 }

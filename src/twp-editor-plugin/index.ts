@@ -25,6 +25,21 @@ const camelCasePluginName = (name: string): string =>
     .replace(/\s(\w)/g, ($1) => $1.toUpperCase())
     .replace(/\s/g, '');
 
+const createTestFolders = (tree: Tree) => {
+  tree.create(
+    'packages/editor/editor-core/src/plugins/__tests__/unit/.gitkeep',
+    ''
+  );
+  tree.create(
+    'packages/editor/editor-core/src/plugins/__tests__/integration/.gitkeep',
+    ''
+  );
+  tree.create(
+    'packages/editor/editor-core/src/plugins/__tests__/visual-regression/.gitkeep',
+    ''
+  );
+};
+
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
@@ -42,6 +57,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       template({ ...options, formattedName }),
       move(pluginPath),
     ]);
+    createTestFolders(tree);
     const merge = mergeWith(templateSource, MergeStrategy.Error);
     return merge(tree, context);
   };

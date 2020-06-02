@@ -122,6 +122,18 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  it('generates __tests__ folders', () => {
+    expect(runSchematic('nice').files).toContain(
+      `${pluginBasePath}/nice/__tests__/unit/.gitkeep`
+    );
+    expect(runSchematic('nice').files).toContain(
+      `${pluginBasePath}/nice/__tests__/integration/.gitkeep`
+    );
+    expect(runSchematic('nice').files).toContain(
+      `${pluginBasePath}/nice/__tests__/visual-regression/.gitkeep`
+    );
+  });
+
   describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
       expect(runSchematic('my awesome').files).toContain(

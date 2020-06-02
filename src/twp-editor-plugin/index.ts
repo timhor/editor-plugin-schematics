@@ -25,10 +25,10 @@ const camelCasePluginName = (name: string): string =>
     .replace(/\s(\w)/g, ($1) => $1.toUpperCase())
     .replace(/\s/g, '');
 
-const createTestFolders = (tree: Tree) => {
-  tree.create(`${pluginBasePath}/__tests__/unit/.gitkeep`, '');
-  tree.create(`${pluginBasePath}/__tests__/integration/.gitkeep`, '');
-  tree.create(`${pluginBasePath}/__tests__/visual-regression/.gitkeep`, '');
+const createTestFolders = (tree: Tree, pluginPath: string) => {
+  tree.create(`${pluginPath}/__tests__/unit/.gitkeep`, '');
+  tree.create(`${pluginPath}/__tests__/integration/.gitkeep`, '');
+  tree.create(`${pluginPath}/__tests__/visual-regression/.gitkeep`, '');
 };
 
 export const pluginBasePath = '/packages/editor/editor-core/src/plugins';
@@ -48,7 +48,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       template({ ...options, formattedName }),
       move(pluginPath),
     ]);
-    createTestFolders(tree);
+    createTestFolders(tree, pluginPath);
     const merge = mergeWith(templateSource, MergeStrategy.Error);
     return merge(tree, context);
   };

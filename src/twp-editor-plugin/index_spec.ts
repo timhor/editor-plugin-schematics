@@ -69,6 +69,20 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('types.ts', () => {
+    it('generates file', () => {
+      expect(runSchematic('nice').files).toContain(
+        `${pluginBasePath}/nice/types.ts`
+      );
+    });
+
+    it('generates file with no content', () => {
+      const tree = runSchematic('nice');
+      const fileContent = tree.readContent(`${pluginBasePath}/nice/types.ts`);
+      expect(fileContent).toEqual('');
+    });
+  });
+
   describe('commands.ts', () => {
     it('generates file', () => {
       expect(runSchematic('nice').files).toContain(

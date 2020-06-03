@@ -13,6 +13,9 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 
-# Mac OSX Finder files.
+# Mac OSX Finder files
 **/.DS_Store
 .DS_Store
+
+# Locally generated schematics (for testing)
+packages/

@@ -1,3 +1,5 @@
+[![](https://circleci.com/gh/timhor/editor-plugin-schematics.svg?style=svg)](https://app.circleci.com/pipelines/github/timhor/editor-plugin-schematics)
+
 # Getting Started With Schematics
 
 This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.

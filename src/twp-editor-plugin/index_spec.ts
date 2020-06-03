@@ -101,6 +101,92 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('pm-plugins/plugin-factory.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+
+          expect(fileContent).toContain(
+            "import { pluginFactory } from '../../utils/plugin-state-factory';"
+          );
+          expect(fileContent).toContain(
+            "import { nicePluginKey } from '../plugin-key';"
+          );
+          expect(fileContent).toContain(
+            "import { NicePluginState } from '../types';"
+          );
+          expect(fileContent).toContain(
+            "import { reducer } from '../reducer';"
+          );
+        });
+
+        it('creates plugin factory', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+          expect(fileContent).toContain(
+            'pluginFactory(nicePluginKey, reducer)'
+          );
+        });
+
+        it('exports plugin factory helpers', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+          expect(fileContent).toContain(
+            'export const {' +
+              '\n  createCommand,' +
+              '\n  getPluginState,' +
+              '\n  createPluginState,' +
+              '\n}'
+          );
+        });
+
+        describe('when plugin name is multi-word', () => {
+          it('imports types', () => {
+            const tree = runSchematic('some awesome', true);
+            const fileContent = tree.readContent(
+              `${pluginBasePath}/some-awesome/pm-plugins/plugin-factory.ts`
+            );
+
+            expect(fileContent).toContain(
+              "import { pluginFactory } from '../../utils/plugin-state-factory';"
+            );
+            expect(fileContent).toContain(
+              "import { someAwesomePluginKey } from '../plugin-key';"
+            );
+            expect(fileContent).toContain(
+              "import { SomeAwesomePluginState } from '../types';"
+            );
+            expect(fileContent).toContain(
+              "import { reducer } from '../reducer';"
+            );
+          });
+        });
+      });
+    });
+  });
+
   describe('actions.ts', () => {
     describe('when not using plugin state', () => {
       it("doesn't generate file", () => {

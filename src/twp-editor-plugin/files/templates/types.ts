@@ -1,6 +1,4 @@
-<% if (usePluginState) { %>
-export interface <%= classify(name) %>PluginState {
+<% if (usePluginState) { %>export interface <%= classify(name) %>PluginState {
 
 }
-
 <% } %>

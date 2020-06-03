@@ -14,19 +14,6 @@ import { strings } from '@angular-devkit/core';
 import { TwpEditorPluginOptions } from './types';
 import { normalize } from 'path';
 
-const kebabCasePluginName = (name: string): string =>
-  name
-    .replace(/(\s)*plugin$/i, '')
-    .replace(/\s/g, '-')
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .toLowerCase();
-
-const camelCasePluginName = (name: string): string =>
-  name
-    .replace(/(\s)*plugin$/i, '')
-    .replace(/\s(\w)/g, ($1) => $1.toUpperCase())
-    .replace(/\s/g, '');
-
 const createTestFolders = (tree: Tree, pluginPath: string) => {
   tree.create(`${pluginPath}/__tests__/unit/.gitkeep`, '');
   tree.create(`${pluginPath}/__tests__/integration/.gitkeep`, '');
@@ -39,18 +26,18 @@ export const pluginBasePath = '/packages/editor/editor-core/src/plugins';
 // per file.
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const { name, usePluginState } = options;
-    const formattedName = {
-      kebab: kebabCasePluginName(name),
-      camel: camelCasePluginName(name),
-    };
+    const { name: unformattedName, usePluginState } = options;
+    // strip final word "plugin" if provided
+    const name = unformattedName.replace(/(\s)*plugin$/i, '');
 
-    const pluginPath = normalize(`${pluginBasePath}/${formattedName.kebab}`);
+    const pluginPath = normalize(
+      `${pluginBasePath}/${strings.dasherize(name)}`
+    );
 
     const rules: Rule[] = [];
 
     const templateSource = apply(url('./files/templates'), [
-      template({ ...options, ...strings, formattedName }),
+      template({ ...options, ...strings }),
       move(pluginPath),
     ]);
     const merge = mergeWith(templateSource, MergeStrategy.Error);

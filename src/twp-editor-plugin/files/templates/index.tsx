@@ -2,13 +2,13 @@ import * as React from 'react';
 import { EditorPlugin } from '../../types';
 import { createPlugin } from './pm-plugins/main';
 
-const <%= formattedName.camel %> = (): EditorPlugin => ({
-  name: '<%= formattedName.camel %>',
+const <%= camelize(name) %> = (): EditorPlugin => ({
+  name: '<%= camelize(name) %>',
 
   pmPlugins() {
     return [
       {
-        name: '<%= formattedName.camel %>',
+        name: '<%= camelize(name) %>',
         plugin: (options) => createPlugin(options),
       },
     ];
@@ -26,4 +26,4 @@ const <%= formattedName.camel %> = (): EditorPlugin => ({
   },
 });
 
-export default <%= formattedName.camel %>;
+export default <%= camelize(name) %>;

@@ -1,3 +1,3 @@
 import { PluginKey } from 'prosemirror-state';
 
-export const pluginKey = new PluginKey('<%= formattedName.camel %>Plugin');
+export const <%= camelize(name) %>PluginKey = new PluginKey('<%= camelize(name) %>Plugin');

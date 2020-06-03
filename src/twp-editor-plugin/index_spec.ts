@@ -4,15 +4,27 @@ import {
   UnitTestTree,
 } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
-import { pluginBasePath } from './index';
+import * as fs from 'fs';
+import { pluginBasePath, createEditorPath } from './index';
 
 const collectionPath = path.join(__dirname, '../collection.json');
+const manualTestingPath = 'src/twp-editor-plugin/files/manual-testing';
 
 describe('twp-editor-plugin', () => {
   const runSchematic = (name: string, usePluginState = false): UnitTestTree => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const sourceTree = Tree.empty();
-    sourceTree.create(`${pluginBasePath}/index.ts`, '');
+    const indexContent = fs
+      .readFileSync(`${manualTestingPath}/index.ts`)
+      .toString('utf-8');
+    sourceTree.create(`${pluginBasePath}/index.ts`, indexContent);
+    const createPluginsListContent = fs
+      .readFileSync(`${manualTestingPath}/create-plugins-list.ts`)
+      .toString('utf-8');
+    sourceTree.create(
+      `${createEditorPath}/create-plugins-list.ts`,
+      createPluginsListContent
+    );
     const tree = runner.runSchematic(
       'twp-editor-plugin',
       { name, usePluginState },
@@ -524,8 +536,24 @@ describe('twp-editor-plugin', () => {
       const tree = runSchematic('nice');
       const fileContent = tree.readContent(`${pluginBasePath}/index.ts`);
       expect(fileContent).toContain(
+        "export { default as existingPlugin } from './existing';"
+      );
+      expect(fileContent).toContain(
         "export { default as nicePlugin } from './nice';"
       );
+    });
+    it('adds import and function call into create-plugins-list.ts', () => {
+      const tree = runSchematic('nice');
+      const fileContent = tree.readContent(
+        `${createEditorPath}/create-plugins-list.ts`
+      );
+      expect(fileContent).toContain(
+        'import {' +
+          '\n  existingPlugin,' +
+          '\n  nicePlugin,' +
+          "\n} from '../plugins';"
+      );
+      expect(fileContent).toContain('plugins.push(nicePlugin())');
     });
   });
 });

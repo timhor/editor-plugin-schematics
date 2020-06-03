@@ -497,6 +497,22 @@ describe('twp-editor-plugin', () => {
     );
   });
 
+  describe('README.md', () => {
+    it('generates readme file', () => {
+      expect(runSchematic('nice').files).toContain(
+        `${pluginBasePath}/nice/README.md`
+      );
+    });
+
+    it('prefills with title and placeholder text', () => {
+      const tree = runSchematic('nice', true);
+      const fileContent = tree.readContent(`${pluginBasePath}/nice/README.md`);
+      expect(fileContent).toContain(
+        '# Nice Plugin' + '\n' + '\nProvide some info about your new plugin'
+      );
+    });
+  });
+
   describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
       expect(runSchematic('my awesome').files).toContain(

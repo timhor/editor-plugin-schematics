@@ -39,7 +39,7 @@ describe('twp-editor-plugin', () => {
           `${pluginBasePath}/nice/plugin-key.ts`
         );
         expect(fileContent).toContain(
-          `export const pluginKey = new PluginKey('nicePlugin')`
+          `export const nicePluginKey = new PluginKey('nicePlugin')`
         );
       });
 
@@ -49,7 +49,7 @@ describe('twp-editor-plugin', () => {
           `${pluginBasePath}/something-great/plugin-key.ts`
         );
         expect(fileContent).toContain(
-          `export const pluginKey = new PluginKey('somethingGreatPlugin')`
+          `export const somethingGreatPluginKey = new PluginKey('somethingGreatPlugin')`
         );
       });
     });
@@ -76,10 +76,38 @@ describe('twp-editor-plugin', () => {
       );
     });
 
-    it('generates file with no content', () => {
-      const tree = runSchematic('nice');
-      const fileContent = tree.readContent(`${pluginBasePath}/nice/types.ts`);
-      expect(fileContent).toEqual('');
+    describe('when not using plugin state', () => {
+      it('generates file with no content', () => {
+        const tree = runSchematic('nice');
+        const fileContent = tree.readContent(`${pluginBasePath}/nice/types.ts`);
+        expect(fileContent).toEqual('');
+      });
+    });
+
+    describe('when using plugin state', () => {
+      describe('generating content', () => {
+        it('adds plugin state type', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/types.ts`
+          );
+          expect(fileContent).toContain(
+            'export interface NicePluginState {\n\n}'
+          );
+        });
+
+        describe('when plugin name is multi-word', () => {
+          it('adds plugin state type', () => {
+            const tree = runSchematic('some awesome', true);
+            const fileContent = tree.readContent(
+              `${pluginBasePath}/some-awesome/types.ts`
+            );
+            expect(fileContent).toContain(
+              'export interface SomeAwesomePluginState {\n\n}'
+            );
+          });
+        });
+      });
     });
   });
 
@@ -90,7 +118,7 @@ describe('twp-editor-plugin', () => {
       );
     });
 
-    describe('when no plugin state', () => {
+    describe('when not using plugin state', () => {
       it('generates file with no content', () => {
         const tree = runSchematic('nice');
         const fileContent = tree.readContent(
@@ -99,25 +127,360 @@ describe('twp-editor-plugin', () => {
         expect(fileContent).toEqual('');
       });
     });
+
+    describe('when using plugin state', () => {
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/commands.ts`
+          );
+
+          expect(fileContent).toContain(
+            "import { createCommand } from './pm-plugins/plugin-factory';"
+          );
+          expect(fileContent).toContain(
+            "import { NiceActionTypes } from './actions';"
+          );
+        });
+
+        it('generates placeholder command', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/commands.ts`
+          );
+
+          expect(fileContent).toContain(
+            'export const someCommand = () =>' +
+              '\n  createCommand({' +
+              '\n    type: NiceActionTypes.SOME_ACTION,' +
+              '\n  });'
+          );
+        });
+
+        describe('when plugin name is multi-word', () => {
+          it('imports types', () => {
+            const tree = runSchematic('some awesome', true);
+            const fileContent = tree.readContent(
+              `${pluginBasePath}/some-awesome/commands.ts`
+            );
+
+            expect(fileContent).toContain(
+              "import { SomeAwesomeActionTypes } from './actions';"
+            );
+          });
+        });
+      });
+    });
+  });
+
+  describe('pm-plugins/plugin-factory.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+
+          expect(fileContent).toContain(
+            "import { pluginFactory } from '../../utils/plugin-state-factory';"
+          );
+          expect(fileContent).toContain(
+            "import { nicePluginKey } from '../plugin-key';"
+          );
+          expect(fileContent).toContain(
+            "import { NicePluginState } from '../types';"
+          );
+          expect(fileContent).toContain(
+            "import { reducer } from '../reducer';"
+          );
+        });
+
+        it('creates plugin factory', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+          expect(fileContent).toContain(
+            'pluginFactory(nicePluginKey, reducer /**, { mapping, onDocChanged, onSelectionChanged } **/)'
+          );
+        });
+
+        it('exports plugin factory helpers', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
+          );
+          expect(fileContent).toContain(
+            'export const {' +
+              '\n  createCommand,' +
+              '\n  getPluginState,' +
+              '\n  createPluginState,' +
+              '\n}'
+          );
+        });
+
+        describe('when plugin name is multi-word', () => {
+          it('imports types', () => {
+            const tree = runSchematic('some awesome', true);
+            const fileContent = tree.readContent(
+              `${pluginBasePath}/some-awesome/pm-plugins/plugin-factory.ts`
+            );
+
+            expect(fileContent).toContain(
+              "import { pluginFactory } from '../../utils/plugin-state-factory';"
+            );
+            expect(fileContent).toContain(
+              "import { someAwesomePluginKey } from '../plugin-key';"
+            );
+            expect(fileContent).toContain(
+              "import { SomeAwesomePluginState } from '../types';"
+            );
+            expect(fileContent).toContain(
+              "import { reducer } from '../reducer';"
+            );
+          });
+        });
+      });
+    });
+  });
+
+  describe('actions.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/actions.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/actions.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('adds actions enum', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain(
+            'export enum NiceActionTypes {' +
+              "\n  SOME_ACTION = 'SOME_ACTION'" +
+              '\n}'
+          );
+        });
+
+        it('adds placeholder action', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain(
+            'export interface SomeNiceAction {' +
+              '\n  type: NiceActionTypes.SOME_ACTION' +
+              '\n}'
+          );
+        });
+
+        it('exports action type', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/actions.ts`
+          );
+          expect(fileContent).toContain(
+            'export type NiceAction = SomeNiceAction'
+          );
+        });
+      });
+    });
+  });
+
+  describe('reducer.ts', () => {
+    describe('when not using plugin state', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/reducer.ts`
+        );
+      });
+    });
+
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', true).files).toContain(
+          `${pluginBasePath}/nice/reducer.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/reducer.ts`
+          );
+          expect(fileContent).toContain(
+            "import { NicePluginState } from './types'"
+          );
+          expect(fileContent).toContain(
+            "import { NiceActionTypes, NiceAction } from './actions'"
+          );
+        });
+
+        it('exports reducer function', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/reducer.ts`
+          );
+          expect(fileContent).toContain(
+            'export function reducer(state: NicePluginState, action: NiceAction): NicePluginState {' +
+              '\n  switch(action.type) {' +
+              '\n    case NiceActionTypes.SOME_ACTION:' +
+              '\n      return { ...state, /** new plugin state values go here **/ };' +
+              '\n' +
+              '\n    default: return state;' +
+              '\n  }' +
+              '\n}'
+          );
+        });
+      });
+    });
   });
 
   describe('pm-plugins/main.ts', () => {
-    it('generates file', () => {
-      const tree = runSchematic('nice', true);
-      expect(tree.files).toContain(`${pluginBasePath}/nice/pm-plugins/main.ts`);
-      const fileContent = tree.readContent(
-        `${pluginBasePath}/nice/pm-plugins/main.ts`
-      );
-      expect(fileContent.includes('createPluginState')).toBeTruthy();
-    });
-
-    describe('when no plugin state', () => {
-      it('generates file without createPluginState', () => {
-        const tree = runSchematic('nice');
-        const fileContent = tree.readContent(
+    describe('when using plugin state', () => {
+      it('generates file', () => {
+        const tree = runSchematic('nice', true);
+        expect(tree.files).toContain(
           `${pluginBasePath}/nice/pm-plugins/main.ts`
         );
-        expect(fileContent.includes('createPluginState')).toBeFalsy();
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).toContain(
+            "import { Plugin } from 'prosemirror-state';"
+          );
+          expect(fileContent).toContain(
+            "import { nicePluginKey } from '../plugin-key';"
+          );
+          expect(fileContent).toContain(
+            "import { PMPluginFactoryParams } from '../../../types';"
+          );
+          expect(fileContent).toContain(
+            "import { createPluginState } from './plugin-factory';"
+          );
+          expect(fileContent).toContain(
+            "import { NicePluginState } from '../types';"
+          );
+        });
+
+        it('creates initial plugin state', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).toContain(
+            'const initialState: NicePluginState = {\n\n};'
+          );
+        });
+
+        it('creates plugin using plugin state', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).toContain(
+            'export const createPlugin = ({' +
+              '\n  dispatch: Dispatch,' +
+              '\n}: PMPluginFactoryParams) =>' +
+              '\n  new Plugin({' +
+              '\n    key: nicePluginKey,' +
+              '\n    state: createPluginState(dispatch, initialState),' +
+              '\n    props: { /* props like nodeViews or decorations */ },' +
+              '\n  });'
+          );
+        });
+      });
+    });
+
+    describe('when not using plugin state', () => {
+      it('generates file', () => {
+        const tree = runSchematic('nice', true);
+        expect(tree.files).toContain(
+          `${pluginBasePath}/nice/pm-plugins/main.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice');
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).toContain(
+            "import { Plugin } from 'prosemirror-state';"
+          );
+          expect(fileContent).toContain(
+            "import { nicePluginKey } from '../plugin-key';"
+          );
+          expect(fileContent).toContain(
+            "import { PMPluginFactoryParams } from '../../../types';"
+          );
+          expect(fileContent).not.toContain(
+            "import { createPluginState } from './plugin-factory';"
+          );
+          expect(fileContent).not.toContain(
+            "import { NicePluginState } from '../types';"
+          );
+        });
+
+        it("doesn't create initial plugin state", () => {
+          const tree = runSchematic('nice');
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).not.toContain(
+            'const initialState: NicePluginState = {\n\n};'
+          );
+        });
+
+        it('creates plugin without plugin state', () => {
+          const tree = runSchematic('nice');
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/main.ts`
+          );
+          expect(fileContent).toContain(
+            'export const createPlugin = ({' +
+              '\n  dispatch: Dispatch,' +
+              '\n}: PMPluginFactoryParams) =>' +
+              '\n  new Plugin({' +
+              '\n    key: nicePluginKey,' +
+              '\n    props: { /* props like nodeViews or decorations */ },' +
+              '\n  });'
+          );
+        });
       });
     });
   });

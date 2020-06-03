@@ -9,6 +9,7 @@ import {
   MergeStrategy,
   mergeWith,
   chain,
+  SchematicsException,
 } from '@angular-devkit/schematics';
 import { strings } from '@angular-devkit/core';
 import { TwpEditorPluginOptions } from './types';
@@ -53,6 +54,27 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
     }
 
+    rules.push(exportPluginFromIndex(name));
+
     return chain(rules)(tree, context);
+  };
+}
+
+function exportPluginFromIndex(pluginName: string): Rule {
+  return (tree: Tree) => {
+    const path = `${pluginBasePath}/index.ts`;
+    const buffer = tree.read(path);
+    if (!buffer) {
+      throw new SchematicsException(`File ${path} not found`);
+    }
+    const recorder = tree.beginUpdate(path);
+    recorder.insertRight(
+      buffer.length,
+      `export { default as ${strings.camelize(
+        pluginName
+      )}Plugin } from './${strings.dasherize(pluginName)}';\n`
+    );
+    tree.commitUpdate(recorder);
+    return tree;
   };
 }

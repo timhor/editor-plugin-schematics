@@ -11,10 +11,12 @@ const collectionPath = path.join(__dirname, '../collection.json');
 describe('twp-editor-plugin', () => {
   const runSchematic = (name: string, usePluginState = false): UnitTestTree => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
+    const sourceTree = Tree.empty();
+    sourceTree.create(`${pluginBasePath}/index.ts`, '');
     const tree = runner.runSchematic(
       'twp-editor-plugin',
       { name, usePluginState },
-      Tree.empty()
+      sourceTree
     );
     return tree;
   };
@@ -513,6 +515,16 @@ describe('twp-editor-plugin', () => {
     it('strips off final word "plugin" if passed in', () => {
       expect(runSchematic('my awesome plugin').files).toContain(
         `${pluginBasePath}/my-awesome/index.tsx`
+      );
+    });
+  });
+
+  describe('codemods for existing architecture', () => {
+    it('adds export from index.ts', () => {
+      const tree = runSchematic('nice');
+      const fileContent = tree.readContent(`${pluginBasePath}/index.ts`);
+      expect(fileContent).toContain(
+        "export { default as nicePlugin } from './nice';"
       );
     });
   });

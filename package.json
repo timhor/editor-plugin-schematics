@@ -5,7 +5,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
-    "test": "npm run build && jest"
+    "test": "npm run build && jest",
+    "simulate:local:clean": "rm -r packages/",
+    "simulate:local:setup:index": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/manual-testing/index.ts packages/editor/editor-core/src/plugins/",
+    "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/manual-testing/create-plugins-list.ts packages/editor/editor-core/src/create-editor/",
+    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:index && npm run simulate:local:setup:cpl && npm run build && schematics .:twp-editor-plugin --debug=false"
   },
   "keywords": [
     "schematics"

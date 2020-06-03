@@ -7,4 +7,4 @@ export const {
   createCommand,
   getPluginState,
   createPluginState,
-} = pluginFactory(<%= camelize(name) %>PluginKey, reducer /**, { mapping, onDocChanged, onSelectionChanged } **/);
+} = pluginFactory(<%= camelize(name) %>PluginKey, reducer, /** { mapping, onDocChanged, onSelectionChanged } **/);

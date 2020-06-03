@@ -217,7 +217,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
           );
           expect(fileContent).toContain(
-            'pluginFactory(nicePluginKey, reducer /**, { mapping, onDocChanged, onSelectionChanged } **/)'
+            'pluginFactory(nicePluginKey, reducer, /** { mapping, onDocChanged, onSelectionChanged } **/)'
           );
         });
 

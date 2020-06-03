@@ -90,13 +90,58 @@ describe('twp-editor-plugin', () => {
       );
     });
 
-    describe('when no plugin state', () => {
+    describe('when not using plugin state', () => {
       it('generates file with no content', () => {
         const tree = runSchematic('nice');
         const fileContent = tree.readContent(
           `${pluginBasePath}/nice/commands.ts`
         );
         expect(fileContent).toEqual('');
+      });
+    });
+
+    describe('when using plugin state', () => {
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/commands.ts`
+          );
+
+          expect(fileContent).toContain(
+            "import { createCommand } from './pm-plugins/plugin-factory';"
+          );
+          expect(fileContent).toContain(
+            "import { NiceActionTypes } from './actions';"
+          );
+        });
+
+        it('generates placeholder command', () => {
+          const tree = runSchematic('nice', true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/commands.ts`
+          );
+
+          expect(fileContent).toContain(
+            'export const someCommand = () =>' +
+              '\n  createCommand({' +
+              '\n    type: NiceActionTypes.SOME_ACTION,' +
+              '\n  });'
+          );
+        });
+
+        describe('when plugin name is multi-word', () => {
+          it('imports types', () => {
+            const tree = runSchematic('some awesome', true);
+            const fileContent = tree.readContent(
+              `${pluginBasePath}/some-awesome/commands.ts`
+            );
+
+            expect(fileContent).toContain(
+              "import { SomeAwesomeActionTypes } from './actions';"
+            );
+          });
+        });
       });
     });
   });

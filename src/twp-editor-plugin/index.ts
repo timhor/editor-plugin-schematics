@@ -50,7 +50,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
     const rules: Rule[] = [];
 
     const templateSource = apply(url('./files/templates'), [
-      template({ ...options, formattedName }),
+      template({ ...options, ...strings, formattedName }),
       move(pluginPath),
     ]);
     const merge = mergeWith(templateSource, MergeStrategy.Error);

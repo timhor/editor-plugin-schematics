@@ -29,8 +29,10 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       useInputRules,
     } = options;
 
-    // strip final word "plugin" if provided
-    const name = unformattedName.replace(/(\s)*plugin$/i, '');
+    // strip final word "plugin" if provided, and any quotes
+    const name = unformattedName
+      .replace(/(\s)*plugin$/i, '')
+      .replace(/['"]/g, '');
     const pluginPath = normalize(
       `${pluginBasePath}/${strings.dasherize(name)}`
     );

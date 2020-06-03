@@ -6,4 +6,5 @@ export const someCommand = () =>
   createCommand({
     type: <%= classify(name) %>ActionTypes.SOME_ACTION,
   });
+
 <% } %>

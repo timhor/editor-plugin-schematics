@@ -217,7 +217,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
           );
           expect(fileContent).toContain(
-            'pluginFactory(nicePluginKey, reducer)'
+            'pluginFactory(nicePluginKey, reducer /**, { mapping, onDocChanged, onSelectionChanged } **/)'
           );
         });
 
@@ -352,6 +352,9 @@ describe('twp-editor-plugin', () => {
           expect(fileContent).toContain(
             'export function reducer(state: NicePluginState, action: NiceAction): NicePluginState {' +
               '\n  switch(action.type) {' +
+              '\n    case NiceActionTypes.SOME_ACTION:' +
+              '\n      return { ...state, /** new plugin state values go here **/ };' +
+              '\n' +
               '\n    default: return state;' +
               '\n  }' +
               '\n}'

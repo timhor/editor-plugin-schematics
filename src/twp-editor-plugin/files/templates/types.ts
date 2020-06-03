@@ -2,4 +2,5 @@
 export interface <%= classify(name) %>PluginState {
 
 }
+
 <% } %>

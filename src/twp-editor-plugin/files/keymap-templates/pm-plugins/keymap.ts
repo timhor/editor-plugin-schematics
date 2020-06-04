@@ -5,7 +5,7 @@ function keymapPlugin() {
   const list = {};
 
   /**
-   * Bind keyboard shortcuts Prosemirror commands using bindKeymapWithCommon helper:
+   * Bind keyboard shortcuts to Prosemirror commands using bindKeymapWithCommon helper:
    *  bindKeymapWithCommand(keymap, command, list);
    */
 

@@ -37,12 +37,104 @@ describe('twp-editor-plugin', () => {
       );
     });
 
-    describe('when using keyboard shortcuts', () => {
-      it('adds keymap plugin into pmPlugins array', () => {});
+    describe('when using keymaps', () => {
+      it('imports keymap plugin', () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          "import keymapPlugin from './pm-plugins/keymap';"
+        );
+      });
+
+      it('adds keymap plugin into pmPlugins array', () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          '      {' +
+            "\n        name: 'niceKeymap'," +
+            '\n        plugin: () => keymapPlugin(),' +
+            '\n      },'
+        );
+      });
+    });
+
+    describe('when not using keymaps', () => {
+      it("doesn't import keymap plugin", () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          "import keymapPlugin from './pm-plugins/keymap';"
+        );
+      });
+
+      it("doesn't add keymap plugin into pmPlugins array", () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          '      {' +
+            "\n        name: 'niceKeymap'," +
+            '\n        plugin: () => keymapPlugin(),' +
+            '\n      },'
+        );
+      });
     });
 
     describe('when using input rules', () => {
-      it('adds input rules plugin into pmPlugins array', () => {});
+      it('imports input rules plugin', () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          "import inputRulesPlugin from './pm-plugins/input-rules';"
+        );
+      });
+
+      it('adds input rules plugin into pmPlugins array', () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          '      {' +
+            "\n        name: 'niceInputRules'," +
+            '\n        plugin: ({ schema }) => inputRulesPlugin(schema),' +
+            '\n      },'
+        );
+      });
+    });
+
+    describe('when not using input rules', () => {
+      it("doesn't import input rules plugin", () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          "import inputRulesPlugin from './pm-plugins/input-rules';"
+        );
+      });
+
+      it("doesn't add input rules plugin into pmPlugins array", () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          '      {' +
+            "\n        name: 'niceInputRules'," +
+            '\n        plugin: ({ schema }) => inputRulesPlugin(schema),' +
+            '\n      },'
+        );
+      });
     });
   });
 
@@ -544,7 +636,7 @@ describe('twp-editor-plugin', () => {
   });
 
   describe('pm-plugins/keymap.ts', () => {
-    describe('when using keyboard shortcuts', () => {
+    describe('when using keymaps', () => {
       it('generates file', () => {
         expect(runSchematic({ name: 'nice', useKeymap: true }).files).toContain(
           `${pluginBasePath}/nice/pm-plugins/keymap.ts`
@@ -575,7 +667,7 @@ describe('twp-editor-plugin', () => {
               '\n  const list = {};' +
               '\n' +
               '\n  /**' +
-              '\n   * Bind keyboard shortcuts Prosemirror commands using bindKeymapWithCommon helper:' +
+              '\n   * Bind keyboard shortcuts to Prosemirror commands using bindKeymapWithCommon helper:' +
               '\n   *  bindKeymapWithCommand(keymap, command, list);' +
               '\n   */' +
               '\n' +
@@ -594,7 +686,7 @@ describe('twp-editor-plugin', () => {
       });
     });
 
-    describe('when not using keyboard shortcuts', () => {
+    describe('when not using keymaps', () => {
       it("doesn't generate file", () => {
         expect(runSchematic({ name: 'nice' }).files).not.toContain(
           `${pluginBasePath}/nice/pm-plugins/keymap.ts`

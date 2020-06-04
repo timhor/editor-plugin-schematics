@@ -25,5 +25,7 @@
       "x-prompt": "Do you want autoformatting/markdown rules?"
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ]
 }

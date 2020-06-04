@@ -3,22 +3,27 @@ import {
   SchematicTestRunner,
   UnitTestTree,
 } from '@angular-devkit/schematics/testing';
-import * as path from 'path';
 import * as fs from 'fs';
-import { pluginBasePath, createEditorPath } from './index';
+import {
+  pluginBasePath,
+  createEditorPath,
+  collectionPath,
+  manualTestingPath,
+} from './constants';
 import { TwpEditorPluginOptions } from './types';
-
-const collectionPath = path.join(__dirname, '../collection.json');
-const manualTestingPath = 'src/twp-editor-plugin/files/manual-testing';
 
 describe('twp-editor-plugin', () => {
   const runSchematic = (options: TwpEditorPluginOptions): UnitTestTree => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const sourceTree = Tree.empty();
+
+    // populate source tree with sample index.ts contents
     const indexContent = fs
       .readFileSync(`${manualTestingPath}/index.ts`)
       .toString('utf-8');
     sourceTree.create(`${pluginBasePath}/index.ts`, indexContent);
+
+    // populate source tree with sample create-plugins-list.ts contents
     const createPluginsListContent = fs
       .readFileSync(`${manualTestingPath}/create-plugins-list.ts`)
       .toString('utf-8');
@@ -26,6 +31,7 @@ describe('twp-editor-plugin', () => {
       `${createEditorPath}/create-plugins-list.ts`,
       createPluginsListContent
     );
+
     const tree = runner.runSchematic('twp-editor-plugin', options, sourceTree);
     return tree;
   };

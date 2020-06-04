@@ -23,7 +23,6 @@
   "dependencies": {
     "@angular-devkit/core": "^9.1.7",
     "@angular-devkit/schematics": "^9.1.7",
-    "@angular-devkit/schematics-cli": "^0.901.7",
     "chalk": "^4.0.0",
     "meow": "^7.0.1",
     "spawndamnit": "^2.0.0",

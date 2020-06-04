@@ -9,8 +9,8 @@ const HELP_MSG = chalk.yellow(`
     $ editor-plugin [options]
 
   Options
-    --dryRun            Whether run should generate real files or just perform a dry run. Default: true
-    --name              Plugin name. If not provided will be asked in a prompt.
+    --dryRun            Whether run should generate real files or just perform a dry run. Default: false
+    --name              Plugin name. If not provided will be asked via a prompt.
 
   Examples
     $ editor-plugin --name="my awesome plugin"

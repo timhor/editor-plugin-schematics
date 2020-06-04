@@ -33,10 +33,11 @@ const checkInAtlassianFrontendRepo = () => {
 const getSchematicsArgs = (flags) => {
   const { dryRun, name } = flags;
 
-  const args = ['.:twp-editor-plugin', '--debug=true'];
-  if (dryRun != undefined) {
-    args.push(`--dryRun=${dryRun}`);
-  }
+  const args = [
+    `${__dirname}/..:twp-editor-plugin`,
+    '--debug=true',
+    `--dryRun=${dryRun == undefined ? false : dryRun}`,
+  ];
   if (name) {
     args.push(`--name="${name}"`);
   }
@@ -52,12 +53,9 @@ async function main() {
 
   checkInAtlassianFrontendRepo();
 
-  const child = spawn(
-    // todo: point to schematics in a better way
-    'schematics',
-    getSchematicsArgs(cli.flags),
-    { stdio: 'inherit' }
-  );
+  const child = spawn('npx', ['schematics', ...getSchematicsArgs(cli.flags)], {
+    stdio: 'inherit',
+  });
 
   const { code } = await child;
   if (code !== 0) {

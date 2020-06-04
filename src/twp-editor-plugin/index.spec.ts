@@ -43,6 +43,22 @@ describe('twp-editor-plugin', () => {
       );
     });
 
+    describe('when using styles', () => {
+      it('generates file', () => {
+        expect(runSchematic({ name: 'nice' }).files).toContain(
+          `${pluginBasePath}/nice/styles.ts`
+        );
+      });
+    });
+
+    describe('when not using styles', () => {
+      it("doesn't generate file", () => {
+        expect(
+          runSchematic({ name: 'nice', useStyles: false }).files
+        ).not.toContain(`${pluginBasePath}/nice/styles.ts`);
+      });
+    });
+
     describe('when using keymaps', () => {
       it('imports keymap plugin', () => {
         const tree = runSchematic({ name: 'nice', useKeymap: true });
@@ -171,20 +187,6 @@ describe('twp-editor-plugin', () => {
           `export const somethingGreatPluginKey = new PluginKey('somethingGreatPlugin')`
         );
       });
-    });
-  });
-
-  describe('styles.ts', () => {
-    it('generates file', () => {
-      expect(runSchematic({ name: 'nice' }).files).toContain(
-        `${pluginBasePath}/nice/styles.ts`
-      );
-    });
-
-    it('generates file with no content', () => {
-      const tree = runSchematic({ name: 'nice' });
-      const fileContent = tree.readContent(`${pluginBasePath}/nice/styles.ts`);
-      expect(fileContent).toEqual('');
     });
   });
 

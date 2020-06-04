@@ -25,6 +25,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
     const {
       name: unformattedName,
       usePluginState,
+      useStyles,
       useKeymap,
       useInputRules,
     } = options;
@@ -55,20 +56,28 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
     }
 
-    if (useKeymap) {
-      const pluginStateTemplateSource = apply(url('./files/keymap-templates'), [
+    if (useStyles) {
+      const stylesTemplateSource = apply(url('./files/styles-templates'), [
         template({ ...options, ...strings }),
         move(pluginPath),
       ]);
-      rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
+      rules.push(mergeWith(stylesTemplateSource, MergeStrategy.Error));
+    }
+
+    if (useKeymap) {
+      const keymapTemplateSource = apply(url('./files/keymap-templates'), [
+        template({ ...options, ...strings }),
+        move(pluginPath),
+      ]);
+      rules.push(mergeWith(keymapTemplateSource, MergeStrategy.Error));
     }
 
     if (useInputRules) {
-      const pluginStateTemplateSource = apply(
+      const inputRulesTemplateSource = apply(
         url('./files/input-rules-templates'),
         [template({ ...options, ...strings }), move(pluginPath)]
       );
-      rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
+      rules.push(mergeWith(inputRulesTemplateSource, MergeStrategy.Error));
     }
 
     rules.push(exportPluginFromIndex(name));

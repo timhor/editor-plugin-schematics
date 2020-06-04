@@ -735,7 +735,7 @@ describe('twp-editor-plugin', () => {
               '\n   *  rules.push(rule);' +
               '\n   */' +
               '\n' +
-              '\n  if (rules.length !== 0) {' +
+              '\n  if (rules.length > 0) {' +
               "\n    return instrumentedInputRule('nice', { rules });" +
               '\n  }' +
               '\n' +
@@ -785,7 +785,7 @@ describe('twp-editor-plugin', () => {
 
   describe('codemods for existing architecture', () => {
     it('adds export from index.ts', () => {
-      const tree = runSchematic('nice');
+      const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(`${pluginBasePath}/index.ts`);
       expect(fileContent).toContain(
         "export { default as existingPlugin } from './existing';"
@@ -795,7 +795,7 @@ describe('twp-editor-plugin', () => {
       );
     });
     it('adds import and function call into create-plugins-list.ts', () => {
-      const tree = runSchematic('nice');
+      const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(
         `${createEditorPath}/create-plugins-list.ts`
       );

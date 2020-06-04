@@ -12,7 +12,7 @@ function inputRulesPlugin(schema: Schema): Plugin | undefined {
    *  rules.push(rule);
    */
 
-  if (rules.length !== 0) {
+  if (rules.length > 0) {
     return instrumentedInputRule('<%= dasherize(name) %>', { rules });
   }
 

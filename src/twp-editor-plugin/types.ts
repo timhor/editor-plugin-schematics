@@ -1,5 +1,6 @@
 export interface TwpEditorPluginOptions {
   name: string;
-  usePluginState: boolean;
-  useKeymap: boolean;
+  usePluginState?: boolean;
+  useKeymap?: boolean;
+  useInputRules?: boolean;
 }

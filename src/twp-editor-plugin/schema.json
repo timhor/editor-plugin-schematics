@@ -18,6 +18,11 @@
       "type": "boolean",
       "default": false,
       "x-prompt": "Do you want keyboard shortcuts?"
+    },
+    "useInputRules": {
+      "type": "boolean",
+      "default": false,
+      "x-prompt": "Do you want autoformatting/markdown rules?"
     }
   },
   "required": ["name"]

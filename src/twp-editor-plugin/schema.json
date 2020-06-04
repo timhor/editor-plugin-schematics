@@ -11,8 +11,18 @@
     },
     "usePluginState": {
       "type": "boolean",
-      "default": "true",
+      "default": true,
       "x-prompt": "Use plugin state?"
+    },
+    "useKeymap": {
+      "type": "boolean",
+      "default": false,
+      "x-prompt": "Do you want keyboard shortcuts?"
+    },
+    "useInputRules": {
+      "type": "boolean",
+      "default": false,
+      "x-prompt": "Do you want autoformatting/markdown rules?"
     }
   },
   "required": [

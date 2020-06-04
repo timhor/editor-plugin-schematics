@@ -6,12 +6,13 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import { pluginBasePath, createEditorPath } from './index';
+import { TwpEditorPluginOptions } from './types';
 
 const collectionPath = path.join(__dirname, '../collection.json');
 const manualTestingPath = 'src/twp-editor-plugin/files/manual-testing';
 
 describe('twp-editor-plugin', () => {
-  const runSchematic = (name: string, usePluginState = false): UnitTestTree => {
+  const runSchematic = (options: TwpEditorPluginOptions): UnitTestTree => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const sourceTree = Tree.empty();
     const indexContent = fs
@@ -25,30 +26,128 @@ describe('twp-editor-plugin', () => {
       `${createEditorPath}/create-plugins-list.ts`,
       createPluginsListContent
     );
-    const tree = runner.runSchematic(
-      'twp-editor-plugin',
-      { name, usePluginState },
-      sourceTree
-    );
+    const tree = runner.runSchematic('twp-editor-plugin', options, sourceTree);
     return tree;
   };
 
-  it('generates index.tsx file', () => {
-    expect(runSchematic('nice').files).toContain(
-      `${pluginBasePath}/nice/index.tsx`
-    );
+  describe('index.tsx', () => {
+    it('generates file', () => {
+      expect(runSchematic({ name: 'nice' }).files).toContain(
+        `${pluginBasePath}/nice/index.tsx`
+      );
+    });
+
+    describe('when using keymaps', () => {
+      it('imports keymap plugin', () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          "import keymapPlugin from './pm-plugins/keymap';"
+        );
+      });
+
+      it('adds keymap plugin into pmPlugins array', () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          '      {' +
+            "\n        name: 'niceKeymap'," +
+            '\n        plugin: () => keymapPlugin(),' +
+            '\n      },'
+        );
+      });
+    });
+
+    describe('when not using keymaps', () => {
+      it("doesn't import keymap plugin", () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          "import keymapPlugin from './pm-plugins/keymap';"
+        );
+      });
+
+      it("doesn't add keymap plugin into pmPlugins array", () => {
+        const tree = runSchematic({ name: 'nice', useKeymap: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          '      {' +
+            "\n        name: 'niceKeymap'," +
+            '\n        plugin: () => keymapPlugin(),' +
+            '\n      },'
+        );
+      });
+    });
+
+    describe('when using input rules', () => {
+      it('imports input rules plugin', () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          "import inputRulesPlugin from './pm-plugins/input-rules';"
+        );
+      });
+
+      it('adds input rules plugin into pmPlugins array', () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: true });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).toContain(
+          '      {' +
+            "\n        name: 'niceInputRules'," +
+            '\n        plugin: ({ schema }) => inputRulesPlugin(schema),' +
+            '\n      },'
+        );
+      });
+    });
+
+    describe('when not using input rules', () => {
+      it("doesn't import input rules plugin", () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          "import inputRulesPlugin from './pm-plugins/input-rules';"
+        );
+      });
+
+      it("doesn't add input rules plugin into pmPlugins array", () => {
+        const tree = runSchematic({ name: 'nice', useInputRules: false });
+        const fileContent = tree.readContent(
+          `${pluginBasePath}/nice/index.tsx`
+        );
+        expect(fileContent).not.toContain(
+          '      {' +
+            "\n        name: 'niceInputRules'," +
+            '\n        plugin: ({ schema }) => inputRulesPlugin(schema),' +
+            '\n      },'
+        );
+      });
+    });
   });
 
   describe('plugin-key.ts', () => {
     it('generates file', () => {
-      expect(runSchematic('nice').files).toContain(
+      expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/plugin-key.ts`
       );
     });
 
     describe('exporting plugin key', () => {
       it('exports plugin key correctly', () => {
-        const tree = runSchematic('nice');
+        const tree = runSchematic({ name: 'nice' });
         const fileContent = tree.readContent(
           `${pluginBasePath}/nice/plugin-key.ts`
         );
@@ -58,7 +157,7 @@ describe('twp-editor-plugin', () => {
       });
 
       it('exports plugin key correctly when plugin name has spaces', () => {
-        const tree = runSchematic('something great');
+        const tree = runSchematic({ name: 'something great' });
         const fileContent = tree.readContent(
           `${pluginBasePath}/something-great/plugin-key.ts`
         );
@@ -71,13 +170,13 @@ describe('twp-editor-plugin', () => {
 
   describe('styles.ts', () => {
     it('generates file', () => {
-      expect(runSchematic('nice').files).toContain(
+      expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/styles.ts`
       );
     });
 
     it('generates file with no content', () => {
-      const tree = runSchematic('nice');
+      const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(`${pluginBasePath}/nice/styles.ts`);
       expect(fileContent).toEqual('');
     });
@@ -85,14 +184,14 @@ describe('twp-editor-plugin', () => {
 
   describe('types.ts', () => {
     it('generates file', () => {
-      expect(runSchematic('nice').files).toContain(
+      expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/types.ts`
       );
     });
 
     describe('when not using plugin state', () => {
       it('generates file with no content', () => {
-        const tree = runSchematic('nice');
+        const tree = runSchematic({ name: 'nice', usePluginState: false });
         const fileContent = tree.readContent(`${pluginBasePath}/nice/types.ts`);
         expect(fileContent).toEqual('');
       });
@@ -101,7 +200,7 @@ describe('twp-editor-plugin', () => {
     describe('when using plugin state', () => {
       describe('generating content', () => {
         it('adds plugin state type', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/types.ts`
           );
@@ -112,7 +211,10 @@ describe('twp-editor-plugin', () => {
 
         describe('when plugin name is multi-word', () => {
           it('adds plugin state type', () => {
-            const tree = runSchematic('some awesome', true);
+            const tree = runSchematic({
+              name: 'some awesome',
+              usePluginState: true,
+            });
             const fileContent = tree.readContent(
               `${pluginBasePath}/some-awesome/types.ts`
             );
@@ -127,14 +229,14 @@ describe('twp-editor-plugin', () => {
 
   describe('commands.ts', () => {
     it('generates file', () => {
-      expect(runSchematic('nice').files).toContain(
+      expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/commands.ts`
       );
     });
 
     describe('when not using plugin state', () => {
       it('generates file with no content', () => {
-        const tree = runSchematic('nice');
+        const tree = runSchematic({ name: 'nice', usePluginState: false });
         const fileContent = tree.readContent(
           `${pluginBasePath}/nice/commands.ts`
         );
@@ -145,7 +247,7 @@ describe('twp-editor-plugin', () => {
     describe('when using plugin state', () => {
       describe('generating content', () => {
         it('imports types', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/commands.ts`
           );
@@ -159,7 +261,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('generates placeholder command', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/commands.ts`
           );
@@ -174,7 +276,10 @@ describe('twp-editor-plugin', () => {
 
         describe('when plugin name is multi-word', () => {
           it('imports types', () => {
-            const tree = runSchematic('some awesome', true);
+            const tree = runSchematic({
+              name: 'some awesome',
+              usePluginState: true,
+            });
             const fileContent = tree.readContent(
               `${pluginBasePath}/some-awesome/commands.ts`
             );
@@ -191,22 +296,22 @@ describe('twp-editor-plugin', () => {
   describe('pm-plugins/plugin-factory.ts', () => {
     describe('when not using plugin state', () => {
       it("doesn't generate file", () => {
-        expect(runSchematic('nice').files).not.toContain(
-          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: false }).files
+        ).not.toContain(`${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`);
       });
     });
 
     describe('when using plugin state', () => {
       it('generates file', () => {
-        expect(runSchematic('nice', true).files).toContain(
-          `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: true }).files
+        ).toContain(`${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`);
       });
 
       describe('generating content', () => {
         it('imports types', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
           );
@@ -226,7 +331,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('creates plugin factory', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
           );
@@ -236,7 +341,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('exports plugin factory helpers', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/plugin-factory.ts`
           );
@@ -251,7 +356,10 @@ describe('twp-editor-plugin', () => {
 
         describe('when plugin name is multi-word', () => {
           it('imports types', () => {
-            const tree = runSchematic('some awesome', true);
+            const tree = runSchematic({
+              name: 'some awesome',
+              usePluginState: true,
+            });
             const fileContent = tree.readContent(
               `${pluginBasePath}/some-awesome/pm-plugins/plugin-factory.ts`
             );
@@ -277,22 +385,22 @@ describe('twp-editor-plugin', () => {
   describe('actions.ts', () => {
     describe('when not using plugin state', () => {
       it("doesn't generate file", () => {
-        expect(runSchematic('nice').files).not.toContain(
-          `${pluginBasePath}/nice/actions.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: false }).files
+        ).not.toContain(`${pluginBasePath}/nice/actions.ts`);
       });
     });
 
     describe('when using plugin state', () => {
       it('generates file', () => {
-        expect(runSchematic('nice', true).files).toContain(
-          `${pluginBasePath}/nice/actions.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: true }).files
+        ).toContain(`${pluginBasePath}/nice/actions.ts`);
       });
 
       describe('generating content', () => {
         it('adds actions enum', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/actions.ts`
           );
@@ -304,7 +412,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('adds placeholder action', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/actions.ts`
           );
@@ -316,7 +424,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('exports action type', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/actions.ts`
           );
@@ -331,22 +439,22 @@ describe('twp-editor-plugin', () => {
   describe('reducer.ts', () => {
     describe('when not using plugin state', () => {
       it("doesn't generate file", () => {
-        expect(runSchematic('nice').files).not.toContain(
-          `${pluginBasePath}/nice/reducer.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: false }).files
+        ).not.toContain(`${pluginBasePath}/nice/reducer.ts`);
       });
     });
 
     describe('when using plugin state', () => {
       it('generates file', () => {
-        expect(runSchematic('nice', true).files).toContain(
-          `${pluginBasePath}/nice/reducer.ts`
-        );
+        expect(
+          runSchematic({ name: 'nice', usePluginState: true }).files
+        ).toContain(`${pluginBasePath}/nice/reducer.ts`);
       });
 
       describe('generating content', () => {
         it('imports types', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/reducer.ts`
           );
@@ -359,7 +467,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('exports reducer function', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/reducer.ts`
           );
@@ -381,7 +489,7 @@ describe('twp-editor-plugin', () => {
   describe('pm-plugins/main.ts', () => {
     describe('when using plugin state', () => {
       it('generates file', () => {
-        const tree = runSchematic('nice', true);
+        const tree = runSchematic({ name: 'nice', usePluginState: true });
         expect(tree.files).toContain(
           `${pluginBasePath}/nice/pm-plugins/main.ts`
         );
@@ -389,7 +497,7 @@ describe('twp-editor-plugin', () => {
 
       describe('generating content', () => {
         it('imports types', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -411,7 +519,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('creates initial plugin state', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -421,7 +529,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('creates plugin using plugin state', () => {
-          const tree = runSchematic('nice', true);
+          const tree = runSchematic({ name: 'nice', usePluginState: true });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -441,7 +549,7 @@ describe('twp-editor-plugin', () => {
 
     describe('when not using plugin state', () => {
       it('generates file', () => {
-        const tree = runSchematic('nice', true);
+        const tree = runSchematic({ name: 'nice', usePluginState: false });
         expect(tree.files).toContain(
           `${pluginBasePath}/nice/pm-plugins/main.ts`
         );
@@ -449,7 +557,7 @@ describe('twp-editor-plugin', () => {
 
       describe('generating content', () => {
         it('imports types', () => {
-          const tree = runSchematic('nice');
+          const tree = runSchematic({ name: 'nice', usePluginState: false });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -471,7 +579,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it("doesn't create initial plugin state", () => {
-          const tree = runSchematic('nice');
+          const tree = runSchematic({ name: 'nice', usePluginState: false });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -481,7 +589,7 @@ describe('twp-editor-plugin', () => {
         });
 
         it('creates plugin without plugin state', () => {
-          const tree = runSchematic('nice');
+          const tree = runSchematic({ name: 'nice', usePluginState: false });
           const fileContent = tree.readContent(
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
@@ -500,26 +608,26 @@ describe('twp-editor-plugin', () => {
   });
 
   it('generates __tests__ folders', () => {
-    expect(runSchematic('nice').files).toContain(
+    expect(runSchematic({ name: 'nice' }).files).toContain(
       `${pluginBasePath}/nice/__tests__/unit/.gitkeep`
     );
-    expect(runSchematic('nice').files).toContain(
+    expect(runSchematic({ name: 'nice' }).files).toContain(
       `${pluginBasePath}/nice/__tests__/integration/.gitkeep`
     );
-    expect(runSchematic('nice').files).toContain(
+    expect(runSchematic({ name: 'nice' }).files).toContain(
       `${pluginBasePath}/nice/__tests__/visual-regression/.gitkeep`
     );
   });
 
   describe('README.md', () => {
     it('generates readme file', () => {
-      expect(runSchematic('nice').files).toContain(
+      expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/README.md`
       );
     });
 
     it('prefills with title and placeholder text', () => {
-      const tree = runSchematic('nice', true);
+      const tree = runSchematic({ name: 'nice', usePluginState: true });
       const fileContent = tree.readContent(`${pluginBasePath}/nice/README.md`);
       expect(fileContent).toContain(
         '# Nice Plugin' + '\n' + '\nProvide some info about your new plugin'
@@ -527,21 +635,149 @@ describe('twp-editor-plugin', () => {
     });
   });
 
+  describe('pm-plugins/keymap.ts', () => {
+    describe('when using keymaps', () => {
+      it('generates file', () => {
+        expect(runSchematic({ name: 'nice', useKeymap: true }).files).toContain(
+          `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic({ name: 'nice', useKeymap: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain(
+            "import { keymap } from 'prosemirror-keymap';"
+          );
+          expect(fileContent).toContain(
+            "import { bindKeymapWithCommand } from '../../keymaps';"
+          );
+        });
+
+        it('creates keymap plugin', () => {
+          const tree = runSchematic({ name: 'nice', useKeymap: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain(
+            'function keymapPlugin() {' +
+              '\n  const list = {};' +
+              '\n' +
+              '\n  /**' +
+              '\n   * Bind keyboard shortcuts to Prosemirror commands using bindKeymapWithCommon helper:' +
+              '\n   *  bindKeymapWithCommand(keymap, command, list);' +
+              '\n   */' +
+              '\n' +
+              '\n  return keymap(list);' +
+              '\n}'
+          );
+        });
+
+        it('exports keymap plugin', () => {
+          const tree = runSchematic({ name: 'nice', useKeymap: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain('export default keymapPlugin;');
+        });
+      });
+    });
+
+    describe('when not using keymaps', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic({ name: 'nice' }).files).not.toContain(
+          `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+        );
+      });
+    });
+  });
+
+  describe('pm-plugins/input-rules.ts', () => {
+    describe('when using input rules', () => {
+      it('generates file', () => {
+        expect(
+          runSchematic({ name: 'nice', useInputRules: true }).files
+        ).toContain(`${pluginBasePath}/nice/pm-plugins/input-rules.ts`);
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic({ name: 'nice', useInputRules: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
+          );
+          expect(fileContent).toContain(
+            "import { InputRule } from 'prosemirror-inputrules';"
+          );
+          expect(fileContent).toContain(
+            "import { Plugin } from 'prosemirror-state';"
+          );
+          expect(fileContent).toContain(
+            "import { createInputRule, instrumentedInputRule } from '../../../utils/input-rules';"
+          );
+        });
+
+        it('creates input rules plugin', () => {
+          const tree = runSchematic({ name: 'nice', useInputRules: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
+          );
+          expect(fileContent).toContain(
+            'function inputRulesPlugin(schema: Schema): Plugin | undefined {' +
+              '\n  const rules: InputRule[] = [];' +
+              '\n' +
+              '\n  /**' +
+              '\n   * Bind autoformatting rules to Prosemirror transactions using createInputRule helper:' +
+              '\n   *  const rule = createInputRule(regex, (state, match, start, end) => tr);' +
+              '\n   *  rules.push(rule);' +
+              '\n   */' +
+              '\n' +
+              '\n  if (rules.length > 0) {' +
+              "\n    return instrumentedInputRule('nice', { rules });" +
+              '\n  }' +
+              '\n' +
+              '\n  return;' +
+              '\n}'
+          );
+        });
+
+        it('exports input rules plugin', () => {
+          const tree = runSchematic({ name: 'nice', useInputRules: true });
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
+          );
+          expect(fileContent).toContain('export default inputRulesPlugin;');
+        });
+      });
+    });
+
+    describe('when not using input rules', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic({ name: 'nice' }).files).not.toContain(
+          `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
+        );
+      });
+    });
+  });
+
   describe('formatting plugin directory name', () => {
     it('formats name with spaces', () => {
-      expect(runSchematic('my awesome').files).toContain(
+      expect(runSchematic({ name: 'my awesome' }).files).toContain(
         `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
 
     it('formats name with camel case', () => {
-      expect(runSchematic('MyAwesome').files).toContain(
+      expect(runSchematic({ name: 'MyAwesome' }).files).toContain(
         `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
 
     it('strips off final word "plugin" if passed in', () => {
-      expect(runSchematic('my awesome plugin').files).toContain(
+      expect(runSchematic({ name: 'my awesome plugin' }).files).toContain(
         `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
@@ -549,7 +785,7 @@ describe('twp-editor-plugin', () => {
 
   describe('codemods for existing architecture', () => {
     it('adds export from index.ts', () => {
-      const tree = runSchematic('nice');
+      const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(`${pluginBasePath}/index.ts`);
       expect(fileContent).toContain(
         "export { default as existingPlugin } from './existing';"
@@ -559,7 +795,7 @@ describe('twp-editor-plugin', () => {
       );
     });
     it('adds import and function call into create-plugins-list.ts', () => {
-      const tree = runSchematic('nice');
+      const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(
         `${createEditorPath}/create-plugins-list.ts`
       );

@@ -30,10 +30,15 @@ export const createEditorPath =
 // per file.
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const { name: unformattedName, usePluginState } = options;
+    const {
+      name: unformattedName,
+      usePluginState,
+      useKeymap,
+      useInputRules,
+    } = options;
+
     // strip final word "plugin" if provided
     const name = unformattedName.replace(/(\s)*plugin$/i, '');
-
     const pluginPath = normalize(
       `${pluginBasePath}/${strings.dasherize(name)}`
     );
@@ -44,8 +49,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       template({ ...options, ...strings }),
       move(pluginPath),
     ]);
-    const merge = mergeWith(templateSource, MergeStrategy.Error);
-    rules.push(merge);
+    rules.push(mergeWith(templateSource, MergeStrategy.Error));
 
     createTestFolders(tree, pluginPath);
 
@@ -59,6 +63,22 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
 
     rules.push(exportPluginFromIndex(name));
     rules.push(importPluginToCreatePluginsList(name));
+
+    if (useKeymap) {
+      const pluginStateTemplateSource = apply(url('./files/keymap-templates'), [
+        template({ ...options, ...strings }),
+        move(pluginPath),
+      ]);
+      rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
+    }
+
+    if (useInputRules) {
+      const pluginStateTemplateSource = apply(
+        url('./files/input-rules-templates'),
+        [template({ ...options, ...strings }), move(pluginPath)]
+      );
+      rules.push(mergeWith(pluginStateTemplateSource, MergeStrategy.Error));
+    }
 
     return chain(rules)(tree, context);
   };

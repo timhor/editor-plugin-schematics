@@ -1,12 +1,12 @@
 {
   "name": "twp-editor-plugin-schematics",
   "version": "0.0.0",
-  "description": "Schematics to automate scaffolding of new TWP Editor plugins",
+  "description": "CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
     "test": "npm run build && jest",
-    "simulate:local:clean": "rm -r packages/",
+    "simulate:local:clean": "rm -rf packages/",
     "simulate:local:setup:index": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/manual-testing/index.ts packages/editor/editor-core/src/plugins/",
     "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/manual-testing/create-plugins-list.ts packages/editor/editor-core/src/create-editor/",
     "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:index && npm run simulate:local:setup:cpl && npm run build && schematics .:twp-editor-plugin --debug=false"
@@ -14,12 +14,18 @@
   "keywords": [
     "schematics"
   ],
+  "bin": {
+    "editor-plugin": "./bin/editor-plugin.js"
+  },
   "author": "Tim Hor",
   "license": "Apache-2.0",
   "schematics": "./src/collection.json",
   "dependencies": {
     "@angular-devkit/core": "^9.1.7",
     "@angular-devkit/schematics": "^9.1.7",
+    "chalk": "^4.0.0",
+    "meow": "^7.0.1",
+    "spawndamnit": "^2.0.0",
     "typescript": "~3.8.2"
   },
   "devDependencies": {

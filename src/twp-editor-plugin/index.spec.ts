@@ -787,6 +787,12 @@ describe('twp-editor-plugin', () => {
         `${pluginBasePath}/my-awesome/index.tsx`
       );
     });
+
+    it('strips quotes', () => {
+      expect(runSchematic({ name: '"my awesome"' }).files).toContain(
+        `${pluginBasePath}/my-awesome/index.tsx`
+      );
+    });
   });
 
   describe('codemods for existing architecture', () => {

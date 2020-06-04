@@ -54,7 +54,7 @@ async function main() {
 
   const child = spawn(
     // todo: point to schematics in a better way
-    __dirname + '/../node_modules/.bin/schematics',
+    'schematics',
     getSchematicsArgs(cli.flags),
     { stdio: 'inherit' }
   );

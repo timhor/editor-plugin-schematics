@@ -3,13 +3,14 @@ import {
   SchematicTestRunner,
   UnitTestTree,
 } from '@angular-devkit/schematics/testing';
-import * as path from 'path';
 import * as fs from 'fs';
-import { pluginBasePath, createEditorPath } from './index';
+import {
+  pluginBasePath,
+  createEditorPath,
+  collectionPath,
+  manualTestingPath,
+} from './constants';
 import { TwpEditorPluginOptions } from './types';
-
-const collectionPath = path.join(__dirname, '../collection.json');
-const manualTestingPath = 'src/twp-editor-plugin/files/manual-testing';
 
 describe('twp-editor-plugin', () => {
   const runSchematic = (options: TwpEditorPluginOptions): UnitTestTree => {

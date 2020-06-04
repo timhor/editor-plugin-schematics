@@ -16,10 +16,7 @@ import { TwpEditorPluginOptions } from './types';
 import { normalize } from 'path';
 import * as ts from 'typescript';
 import { createTestFolders, getSourceNodes } from './utils';
-
-export const pluginBasePath = '/packages/editor/editor-core/src/plugins';
-export const createEditorPath =
-  '/packages/editor/editor-core/src/create-editor';
+import { pluginBasePath, createEditorPath } from './constants';
 
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {

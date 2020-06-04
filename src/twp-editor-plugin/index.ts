@@ -18,6 +18,7 @@ import { createTestFolders } from './utils';
 import {
   exportPluginFromIndex,
   importPluginToCreatePluginsList,
+  importStylesToContentStyles,
 } from './codemods';
 
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
@@ -62,6 +63,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
         move(pluginPath),
       ]);
       rules.push(mergeWith(stylesTemplateSource, MergeStrategy.Error));
+      rules.push(importStylesToContentStyles(name));
     }
 
     if (useKeymap) {

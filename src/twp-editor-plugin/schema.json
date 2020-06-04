@@ -12,20 +12,18 @@
     "usePluginState": {
       "type": "boolean",
       "default": true,
-      "x-prompt": "Use plugin state?"
+      "x-prompt": "Include plugin state?"
     },
     "useKeymap": {
       "type": "boolean",
       "default": false,
-      "x-prompt": "Do you want keyboard shortcuts?"
+      "x-prompt": "Include keyboard shortcuts?"
     },
     "useInputRules": {
       "type": "boolean",
       "default": false,
-      "x-prompt": "Do you want autoformatting/markdown rules?"
+      "x-prompt": "Include autoformatting/markdown rules?"
     }
   },
-  "required": [
-    "name"
-  ]
+  "required": ["name"]
 }

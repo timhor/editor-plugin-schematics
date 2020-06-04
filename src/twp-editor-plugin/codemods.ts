@@ -5,7 +5,11 @@ import {
   SchematicsException,
 } from '@angular-devkit/schematics';
 import { strings } from '@angular-devkit/core';
-import { pluginBasePath, createEditorPath } from './constants';
+import {
+  pluginBasePath,
+  createEditorPath,
+  contentStylesPath,
+} from './constants';
 import { getSourceNodes } from './utils';
 import * as ts from 'typescript';
 
@@ -86,6 +90,59 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
   };
 }
 
+export function importStylesToContentStyles(pluginName: string): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const path = `${contentStylesPath}/index.ts`;
+    const buffer = tree.read(path);
+    if (!buffer) {
+      throw new SchematicsException(`File ${path} not found`);
+    }
+
+    const recorder = tree.beginUpdate(path);
+    const source = ts.createSourceFile(
+      path,
+      buffer.toString(),
+      ts.ScriptTarget.Latest,
+      true
+    );
+    const nodes = getSourceNodes(source);
+
+    const finalImportStatement = nodes
+      .slice()
+      .reverse()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.ImportDeclaration)
+      ?.getChildren()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.SemicolonToken);
+    if (!finalImportStatement) {
+      throw new SchematicsException(`Error locating imports in ${path}`);
+    }
+
+    recorder.insertRight(
+      finalImportStatement.pos + 1,
+      `\nimport { ${strings.camelize(
+        pluginName
+      )}Styles } from '../../plugins/${strings.dasherize(pluginName)}/styles';`
+    );
+
+    const pluginReturnStatement = nodes.find(
+      (node: ts.Node) => node.kind === ts.SyntaxKind.TemplateExpression
+    );
+    if (!pluginReturnStatement) {
+      throw new SchematicsException(
+        `Error locating plugin return statement in ${path}`
+      );
+    }
+
+    recorder.insertRight(
+      pluginReturnStatement.pos + pluginReturnStatement.getText().length - 1,
+      '\n  ${' + strings.camelize(pluginName) + 'Styles}\n'
+    );
+
+    tree.commitUpdate(recorder);
+    return tree;
+  };
+}
+
 // useful functions for developing codemods - to run: yarn build && node src/twp-editor-plugin/codemods.js
 // from https://medium.com/humanitec-developers/update-and-insert-auto-generated-code-to-existing-typescript-html-and-json-files-with-angular-f0b00f22fb52
 
@@ -105,10 +162,7 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
 //   }
 // }
 
-// let buffer = fs.readFileSync(
-//   `${manualTestingPath}/create-plugins-list.ts`
-
-// );
+// let buffer = fs.readFileSync(`${manualTestingPath}/create-plugins-list.ts`);
 // let content = buffer.toString('utf-8');
 // let node = ts.createSourceFile(
 //   'create-plugins-list.ts',

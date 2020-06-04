@@ -9,6 +9,7 @@ import {
   createEditorPath,
   collectionPath,
   manualTestingPath,
+  contentStylesPath,
 } from './constants';
 import { TwpEditorPluginOptions } from './types';
 
@@ -17,11 +18,20 @@ describe('twp-editor-plugin', () => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const sourceTree = Tree.empty();
 
-    // populate source tree with sample index.ts contents
-    const indexContent = fs
-      .readFileSync(`${manualTestingPath}/index.ts`)
+    // populate source tree with sample ContentStyles/index.ts contents
+    const contentStylesIndexContent = fs
+      .readFileSync(`${manualTestingPath}/ContentStyles-index.ts`)
       .toString('utf-8');
-    sourceTree.create(`${pluginBasePath}/index.ts`, indexContent);
+    sourceTree.create(
+      `${contentStylesPath}/index.ts`,
+      contentStylesIndexContent
+    );
+
+    // populate source tree with sample plugins/index.ts contents
+    const pluginsIndexContent = fs
+      .readFileSync(`${manualTestingPath}/plugins-index.ts`)
+      .toString('utf-8');
+    sourceTree.create(`${pluginBasePath}/index.ts`, pluginsIndexContent);
 
     // populate source tree with sample create-plugins-list.ts contents
     const createPluginsListContent = fs
@@ -41,6 +51,39 @@ describe('twp-editor-plugin', () => {
       expect(runSchematic({ name: 'nice' }).files).toContain(
         `${pluginBasePath}/nice/index.tsx`
       );
+    });
+
+    describe('when using styles', () => {
+      it('generates file', () => {
+        expect(runSchematic({ name: 'nice' }).files).toContain(
+          `${pluginBasePath}/nice/styles.ts`
+        );
+      });
+      it('adds import into ContentStyles', () => {
+        const tree = runSchematic({ name: 'nice' });
+        const fileContent = tree.readContent(`${contentStylesPath}/index.ts`);
+        expect(fileContent).toContain(
+          "import { niceStyles } from '../../plugins/nice/styles';"
+        );
+        expect(fileContent).toContain('${niceStyles}');
+      });
+    });
+
+    describe('when not using styles', () => {
+      it("doesn't generate file", () => {
+        expect(
+          runSchematic({ name: 'nice', useStyles: false }).files
+        ).not.toContain(`${pluginBasePath}/nice/styles.ts`);
+      });
+
+      it("doesn't add import into ContentStyles", () => {
+        const tree = runSchematic({ name: 'nice', useStyles: false });
+        const fileContent = tree.readContent(`${contentStylesPath}/index.ts`);
+        expect(fileContent).not.toContain(
+          "import { niceStyles } from '../../plugins/nice/styles';"
+        );
+        expect(fileContent).not.toContain('${niceStyles}');
+      });
     });
 
     describe('when using keymaps', () => {
@@ -171,20 +214,6 @@ describe('twp-editor-plugin', () => {
           `export const somethingGreatPluginKey = new PluginKey('somethingGreatPlugin')`
         );
       });
-    });
-  });
-
-  describe('styles.ts', () => {
-    it('generates file', () => {
-      expect(runSchematic({ name: 'nice' }).files).toContain(
-        `${pluginBasePath}/nice/styles.ts`
-      );
-    });
-
-    it('generates file with no content', () => {
-      const tree = runSchematic({ name: 'nice' });
-      const fileContent = tree.readContent(`${pluginBasePath}/nice/styles.ts`);
-      expect(fileContent).toEqual('');
     });
   });
 

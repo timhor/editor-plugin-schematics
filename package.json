@@ -7,9 +7,10 @@
     "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
     "test": "npm run build && jest",
     "simulate:local:clean": "rm -rf packages/",
-    "simulate:local:setup:index": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/manual-testing/index.ts packages/editor/editor-core/src/plugins/",
-    "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/manual-testing/create-plugins-list.ts packages/editor/editor-core/src/create-editor/",
-    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:index && npm run simulate:local:setup:cpl && npm run build && schematics .:twp-editor-plugin --debug=false"
+    "simulate:local:setup:pi": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/manual-testing/plugins-index.ts packages/editor/editor-core/src/plugins/index.ts",
+    "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/manual-testing/create-plugins-list.ts packages/editor/editor-core/src/create-editor/create-plugins-list.ts",
+    "simulate:local:setup:csi": "mkdir -p packages/editor/editor-core/src/ui/ContentStyles && cp src/twp-editor-plugin/files/manual-testing/ContentStyles-index.ts packages/editor/editor-core/src/ui/ContentStyles/index.ts",
+    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:cpl && npm run simulate:local:setup:csi && npm run build && schematics .:twp-editor-plugin --debug=false"
   },
   "keywords": [
     "schematics"

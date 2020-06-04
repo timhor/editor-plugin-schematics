@@ -11,7 +11,11 @@ const collectionPath = path.join(__dirname, '../collection.json');
 const manualTestingPath = 'src/twp-editor-plugin/files/manual-testing';
 
 describe('twp-editor-plugin', () => {
-  const runSchematic = (name: string, usePluginState = false): UnitTestTree => {
+  const runSchematic = (
+    name: string,
+    usePluginState = false,
+    useKeymap = false
+  ): UnitTestTree => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const sourceTree = Tree.empty();
     const indexContent = fs
@@ -524,6 +528,64 @@ describe('twp-editor-plugin', () => {
       expect(fileContent).toContain(
         '# Nice Plugin' + '\n' + '\nProvide some info about your new plugin'
       );
+    });
+  });
+
+  describe.only('pm-plugins/keymap.ts', () => {
+    describe('when using keyboard shortcuts', () => {
+      it('generates file', () => {
+        expect(runSchematic('nice', false, true).files).toContain(
+          `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+        );
+      });
+
+      describe('generating content', () => {
+        it('imports types', () => {
+          const tree = runSchematic('nice', false, true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain(
+            "import { keymap } from 'prosemirror-keymap';"
+          );
+          expect(fileContent).toContain(
+            "import { bindKeymapWithCommand } from '../../keymaps';"
+          );
+        });
+
+        it('creates keymap plugin', () => {
+          const tree = runSchematic('nice', false, true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain(
+            'const keymapPlugin = () => {' +
+              '\n  const list = {};' +
+              '\n  /**' +
+              '\n   * Bind any keyboard shortcuts you need to Prosemirror commands like:' +
+              '\n   *  bindKeymapWithCommand(keymap, command, list);' +
+              '\n   */' +
+              '\n  return keymap(list);' +
+              '\n};'
+          );
+        });
+
+        it('exports keymap plugin', () => {
+          const tree = runSchematic('nice', false, true);
+          const fileContent = tree.readContent(
+            `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+          );
+          expect(fileContent).toContain('export default keymapPlugin;');
+        });
+      });
+    });
+
+    describe('when not using keyboard shortcuts', () => {
+      it("doesn't generate file", () => {
+        expect(runSchematic('nice').files).not.toContain(
+          `${pluginBasePath}/nice/pm-plugins/keymap.ts`
+        );
+      });
     });
   });
 

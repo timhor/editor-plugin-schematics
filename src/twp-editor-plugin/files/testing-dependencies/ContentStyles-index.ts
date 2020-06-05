@@ -3,9 +3,9 @@
 import styled from 'styled-components';
 import { HTMLAttributes, ComponentClass } from 'react';
 import {} from '@atlaskit/editor-common';
-import { existingStyles1 } '../../plugins/existing/styles1';
-import { existingStyles2 } '../../plugins/existing/styles2';
-import { existingStyles3 } '../../plugins/existing/styles3';
+import { existingStyles1 } from '../../plugins/existing/styles1';
+import { existingStyles2 } from '../../plugins/existing/styles2';
+import { existingStyles3 } from '../../plugins/existing/styles3';
 
 const ContentStyles: ComponentClass<HTMLAttributes<{}> & {
   theme: any;

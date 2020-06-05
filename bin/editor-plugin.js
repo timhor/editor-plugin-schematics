@@ -3,6 +3,7 @@ const spawn = require('spawndamnit');
 const meow = require('meow');
 const chalk = require('chalk');
 const fs = require('fs');
+const ora = require('ora');
 
 const HELP_MSG = chalk.yellow(`
   Usage
@@ -49,20 +50,38 @@ const getSchematicsArgs = (flags) => {
 async function main() {
   const cli = meow(HELP_MSG);
 
-  console.log(chalk.cyan('\nScaffolding new editor plugin...\n'));
+  console.log('');
+  const spinner = ora(chalk.cyan('Scaffolding new editor plugin...')).start();
+  // Spinner overrides stdout so it needs to be disabled before first prompt appears
+  // Unfortunately there was no easy way to wait until prompted, so waiting for
+  // this magic 2s which seems to be okay
+  setTimeout(() => {
+    spinner.stopAndPersist();
+    console.log('');
+  }, 2000);
 
   checkInAtlassianFrontendRepo();
 
-  const child = spawn('npx', ['schematics', ...getSchematicsArgs(cli.flags)], {
-    stdio: 'inherit',
-  });
+  // We use npx as it will install the package if it can't find it
+  // This means users don't need to already have installed schematics-cli globally
+  const child = spawn(
+    'npx',
+    [
+      '--quiet',
+      '@angular-devkit/schematics-cli',
+      ...getSchematicsArgs(cli.flags),
+    ],
+    {
+      stdio: 'inherit',
+    }
+  );
 
   const { code } = await child;
   if (code !== 0) {
     process.exit(code);
   }
 
-  console.log(chalk.green('\nPlugin scaffolded!'));
+  console.log(chalk.green('\nPlugin successfully scaffolded!'));
 }
 
 main().catch((error) => {

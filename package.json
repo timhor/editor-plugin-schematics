@@ -11,7 +11,7 @@
     "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/testing-dependencies/create-plugins-list.ts packages/editor/editor-core/src/create-editor/create-plugins-list.ts",
     "simulate:local:setup:csi": "mkdir -p packages/editor/editor-core/src/ui/ContentStyles && cp src/twp-editor-plugin/files/testing-dependencies/ContentStyles-index.ts packages/editor/editor-core/src/ui/ContentStyles/index.ts",
     "simulate:local:setup:el": "mkdir -p packages/editor/editor-core/src/labs/next/presets && cp src/twp-editor-plugin/files/testing-dependencies/default.tsx packages/editor/editor-core/src/labs/next/presets/default.tsx",
-    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:cpl && npm run simulate:local:setup:csi && npm run simulate:local:setup:el && npm run build && schematics .:twp-editor-plugin --debug=false",
+    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:cpl && npm run simulate:local:setup:csi && npm run simulate:local:setup:el",
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [

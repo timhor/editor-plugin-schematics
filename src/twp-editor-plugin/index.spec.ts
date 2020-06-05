@@ -577,7 +577,7 @@ describe('twp-editor-plugin', () => {
           );
           expect(fileContent).toContain(
             'export const createPlugin = ({' +
-              '\n  dispatch: Dispatch,' +
+              '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
               '\n  new Plugin({' +
               '\n    key: nicePluginKey,' +
@@ -637,7 +637,7 @@ describe('twp-editor-plugin', () => {
           );
           expect(fileContent).toContain(
             'export const createPlugin = ({' +
-              '\n  dispatch: Dispatch,' +
+              '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
               '\n  new Plugin({' +
               '\n    key: nicePluginKey,' +

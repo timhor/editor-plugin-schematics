@@ -2,9 +2,17 @@
 
 # TWP Editor Plugin Schematics
 
-CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo, as well as running codemods to update necessary files
+CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo, as well as running codemods to update necessary files.
 
-This uses [Angular Schematics](https://angular.io/guide/schematics-authoring) to achieve this
+[Angular Schematics](https://angular.io/guide/schematics-authoring) is used to achieve this.
+
+## License
+
+Apache 2.0, see [LICENSE](LICENSE).
+
+## Contributing
+
+If you wish to contribute to this project, either create a GitHub issue or follow the usual fork/pull request workflow. Please see below for development instructions.
 
 ## Usage
 
@@ -90,12 +98,4 @@ Tests are written using Jest, run them using:
 
 ```bash
 yarn test
-```
-
-### Publishing
-
-Publish the package to npm with:
-
-```bash
-npm publish
 ```

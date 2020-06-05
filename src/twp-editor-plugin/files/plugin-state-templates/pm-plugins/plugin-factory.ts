@@ -1,6 +1,5 @@
-import { pluginFactory } from '../../utils/plugin-state-factory';
+import { pluginFactory } from '../../../utils/plugin-state-factory';
 import { <%= camelize(name) %>PluginKey } from '../plugin-key';
-import { <%= classify(name) %>PluginState } from '../types';
 import { reducer } from '../reducer';
 
 export const {

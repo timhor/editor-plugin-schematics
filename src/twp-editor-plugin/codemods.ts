@@ -50,7 +50,11 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
     const nodes = getSourceNodes(source);
 
     const importClosingBrace = nodes
-      .find((node: ts.Node) => node.kind === ts.SyntaxKind.ImportDeclaration)
+      .find(
+        (node: ts.Node) =>
+          node.kind === ts.SyntaxKind.ImportDeclaration &&
+          node.getText().includes("'../plugins'")
+      )
       ?.getChildren()
       .find((node: ts.Node) => node.kind === ts.SyntaxKind.ImportClause)
       ?.getChildren()
@@ -58,7 +62,7 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
       ?.getChildren()
       .find((node: ts.Node) => node.kind === ts.SyntaxKind.CloseBraceToken);
     if (!importClosingBrace) {
-      throw new SchematicsException(`Error locating imports in ${path}`);
+      throw new SchematicsException(`Error locating plugin imports in ${path}`);
     }
 
     recorder.insertLeft(
@@ -67,7 +71,11 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
     );
 
     const pluginReturnStatement = nodes
-      .find((node: ts.Node) => node.kind === ts.SyntaxKind.FunctionDeclaration)
+      .find(
+        (node: ts.Node) =>
+          node.kind === ts.SyntaxKind.FunctionDeclaration &&
+          node.getText().includes('createPluginsList')
+      )
       ?.getChildren()
       .find((node: ts.Node) => node.kind === ts.SyntaxKind.Block)
       ?.getChildren()

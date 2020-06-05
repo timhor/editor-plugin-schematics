@@ -28,6 +28,11 @@
       "type": "boolean",
       "default": false,
       "x-prompt": "Include autoformatting/markdown rules?"
+    },
+    "addToLabs": {
+      "type": "boolean",
+      "default": true,
+      "x-prompt": "Add to default preset in editor V3 architecture?"
     }
   },
   "required": ["name"]

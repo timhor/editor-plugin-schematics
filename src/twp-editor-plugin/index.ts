@@ -19,6 +19,7 @@ import {
   exportPluginFromIndex,
   importPluginToCreatePluginsList,
   importStylesToContentStyles,
+  importPluginToEditorLabs,
 } from './codemods';
 
 export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
@@ -29,6 +30,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
       useStyles,
       useKeymap,
       useInputRules,
+      addToLabs,
     } = options;
 
     // strip final word "plugin" if provided, and any quotes
@@ -84,6 +86,10 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
 
     rules.push(exportPluginFromIndex(name));
     rules.push(importPluginToCreatePluginsList(name));
+
+    if (addToLabs) {
+      rules.push(importPluginToEditorLabs(name));
+    }
 
     return chain(rules)(tree, context);
   };

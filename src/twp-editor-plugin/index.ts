@@ -37,6 +37,8 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
     const name = unformattedName
       .replace(/(\s)*plugin$/i, '')
       .replace(/['"]/g, '');
+    options.name = name;
+
     const pluginPath = normalize(
       `${pluginBasePath}/${strings.dasherize(name)}`
     );

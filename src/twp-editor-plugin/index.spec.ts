@@ -8,7 +8,7 @@ import {
   pluginBasePath,
   createEditorPath,
   collectionPath,
-  manualTestingPath,
+  testingDependenciesPath,
   contentStylesPath,
 } from './constants';
 import { TwpEditorPluginOptions } from './types';
@@ -20,7 +20,7 @@ describe('twp-editor-plugin', () => {
 
     // populate source tree with sample ContentStyles/index.ts contents
     const contentStylesIndexContent = fs
-      .readFileSync(`${manualTestingPath}/ContentStyles-index.ts`)
+      .readFileSync(`${testingDependenciesPath}/ContentStyles-index.ts`)
       .toString('utf-8');
     sourceTree.create(
       `${contentStylesPath}/index.ts`,
@@ -29,13 +29,13 @@ describe('twp-editor-plugin', () => {
 
     // populate source tree with sample plugins/index.ts contents
     const pluginsIndexContent = fs
-      .readFileSync(`${manualTestingPath}/plugins-index.ts`)
+      .readFileSync(`${testingDependenciesPath}/plugins-index.ts`)
       .toString('utf-8');
     sourceTree.create(`${pluginBasePath}/index.ts`, pluginsIndexContent);
 
     // populate source tree with sample create-plugins-list.ts contents
     const createPluginsListContent = fs
-      .readFileSync(`${manualTestingPath}/create-plugins-list.ts`)
+      .readFileSync(`${testingDependenciesPath}/create-plugins-list.ts`)
       .toString('utf-8');
     sourceTree.create(
       `${createEditorPath}/create-plugins-list.ts`,

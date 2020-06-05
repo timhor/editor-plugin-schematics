@@ -19,7 +19,7 @@ If you wish to contribute to this project, either create a GitHub issue or follo
 Install globally:
 
 ```bash
-yarn global add editor-plugin-schematics
+yarn global add twp-editor-plugin-schematics
 ```
 
 And then run in the root directory of the Atlassian Frontend repo:

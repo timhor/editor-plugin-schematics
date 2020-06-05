@@ -9,6 +9,7 @@ import {
   pluginBasePath,
   createEditorPath,
   contentStylesPath,
+  editorLabsPath,
 } from './constants';
 import { getSourceNodes } from './utils';
 import * as ts from 'typescript';
@@ -91,6 +92,68 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
     recorder.insertLeft(
       pluginReturnStatement.pos,
       `\n\n  plugins.push(${strings.camelize(pluginName)}Plugin());`
+    );
+
+    tree.commitUpdate(recorder);
+    return tree;
+  };
+}
+
+export function importPluginToEditorLabs(pluginName: string): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const path = `${editorLabsPath}/default.tsx`;
+    const buffer = tree.read(path);
+    if (!buffer) {
+      throw new SchematicsException(`File ${path} not found`);
+    }
+
+    const recorder = tree.beginUpdate(path);
+    const source = ts.createSourceFile(
+      path,
+      buffer.toString(),
+      ts.ScriptTarget.Latest,
+      true
+    );
+    const nodes = getSourceNodes(source);
+
+    const finalImportStatement = nodes
+      .slice()
+      .reverse()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.ImportDeclaration)
+      ?.getChildren()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.SemicolonToken);
+    if (!finalImportStatement) {
+      throw new SchematicsException(`Error locating imports in ${path}`);
+    }
+
+    recorder.insertRight(
+      finalImportStatement.pos + 1,
+      `\nimport ${strings.camelize(
+        pluginName
+      )}Plugin from '../../../plugins/${strings.dasherize(pluginName)}';`
+    );
+
+    const pluginReturnStatement = nodes
+      .find(
+        (node: ts.Node) =>
+          node.kind === ts.SyntaxKind.FunctionDeclaration &&
+          node.getText().includes('useDefaultPreset')
+      )
+      ?.getChildren()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.Block)
+      ?.getChildren()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.SyntaxList)
+      ?.getChildren()
+      .find((node: ts.Node) => node.kind === ts.SyntaxKind.ReturnStatement);
+    if (!pluginReturnStatement) {
+      throw new SchematicsException(
+        `Error locating plugin return statement in ${path}`
+      );
+    }
+
+    recorder.insertLeft(
+      pluginReturnStatement.pos,
+      `\n  preset.add(${strings.camelize(pluginName)}Plugin);`
     );
 
     tree.commitUpdate(recorder);

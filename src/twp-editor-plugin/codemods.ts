@@ -213,32 +213,3 @@ export function importStylesToContentStyles(pluginName: string): Rule {
     return tree;
   };
 }
-
-// useful functions for developing codemods - to run: yarn build && node src/twp-editor-plugin/codemods.js
-// from https://medium.com/humanitec-developers/update-and-insert-auto-generated-code-to-existing-typescript-html-and-json-files-with-angular-f0b00f22fb52
-
-// import { manualTestingPath } from './constants';
-// import * as fs from 'fs';
-
-// function showTree(node: ts.Node, indent: string = '    '): void {
-//   // output the syntax kind of the node
-//   console.log(indent + ts.SyntaxKind[node.kind]);
-//   // output the text of node
-//   if (node.getChildCount() === 0) {
-//     console.log(indent + '    Text: ' + node.getText());
-//   }
-//   // output the children nodes
-//   for (let child of node.getChildren()) {
-//     showTree(child, indent + '    ');
-//   }
-// }
-
-// let buffer = fs.readFileSync(`${manualTestingPath}/create-plugins-list.ts`);
-// let content = buffer.toString('utf-8');
-// let node = ts.createSourceFile(
-//   'create-plugins-list.ts',
-//   content,
-//   ts.ScriptTarget.Latest,
-//   true
-// );
-// showTree(node);

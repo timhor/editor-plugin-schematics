@@ -78,6 +78,12 @@ And then in the `atlassian-frontend` repo you can just run:
 
 And it will point to your local `editor-plugin-schematics` project
 
+### Working with TypeScript AST
+
+- <https://ts-ast-viewer.com/#>
+- <https://ts-morph.com/navigation/>
+- <https://medium.com/humanitec-developers/update-and-insert-auto-generated-code-to-existing-typescript-html-and-json-files-with-angular-f0b00f22fb52>
+
 ### Testing
 
 Tests are written using Jest, run them using:

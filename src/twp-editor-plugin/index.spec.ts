@@ -359,13 +359,10 @@ describe('twp-editor-plugin', () => {
           );
 
           expect(fileContent).toContain(
-            "import { pluginFactory } from '../../utils/plugin-state-factory';"
+            "import { pluginFactory } from '../../../utils/plugin-state-factory';"
           );
           expect(fileContent).toContain(
             "import { nicePluginKey } from '../plugin-key';"
-          );
-          expect(fileContent).toContain(
-            "import { NicePluginState } from '../types';"
           );
           expect(fileContent).toContain(
             "import { reducer } from '../reducer';"
@@ -407,13 +404,10 @@ describe('twp-editor-plugin', () => {
             );
 
             expect(fileContent).toContain(
-              "import { pluginFactory } from '../../utils/plugin-state-factory';"
+              "import { pluginFactory } from '../../../utils/plugin-state-factory';"
             );
             expect(fileContent).toContain(
               "import { someAwesomePluginKey } from '../plugin-key';"
-            );
-            expect(fileContent).toContain(
-              "import { SomeAwesomePluginState } from '../types';"
             );
             expect(fileContent).toContain(
               "import { reducer } from '../reducer';"
@@ -577,7 +571,7 @@ describe('twp-editor-plugin', () => {
           );
           expect(fileContent).toContain(
             'export const createPlugin = ({' +
-              '\n  dispatch: Dispatch,' +
+              '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
               '\n  new Plugin({' +
               '\n    key: nicePluginKey,' +
@@ -637,7 +631,7 @@ describe('twp-editor-plugin', () => {
           );
           expect(fileContent).toContain(
             'export const createPlugin = ({' +
-              '\n  dispatch: Dispatch,' +
+              '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
               '\n  new Plugin({' +
               '\n    key: nicePluginKey,' +

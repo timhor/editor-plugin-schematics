@@ -9,7 +9,7 @@ const initialState: <%= classify(name) %>PluginState = {
 };<% } %>
 
 export const createPlugin = ({
-  dispatch: Dispatch,
+  dispatch,
 }: PMPluginFactoryParams) =>
   new Plugin({
     key: <%= camelize(name) %>PluginKey,<% if (usePluginState) { %>

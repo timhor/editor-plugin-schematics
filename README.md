@@ -32,7 +32,7 @@ Install schematics CLI tool globally:
 yarn global add @angular-devkit/schematics-cli
 ```
 
-And then setup the repo:
+And then set up the repo:
 
 ```bash
 ~$ git checkout git@github.com:timhor/editor-plugin-schematics.git
@@ -41,13 +41,13 @@ And then setup the repo:
 
 ### Running locally
 
-First you will need to setup a file system to mimic being in the root directory of atlassian-frontend:
+First you will need to set up a file system to mimic being in the root directory of atlassian-frontend:
 
 ```bash
 ~/editor-plugin-schematics$ yarn simulate:local
 ```
 
-And then you can build the project and run the schematics:
+Then you can build the project and run the schematics:
 
 ```bash
 ~/editor-plugin-schematics$ yarn twp-editor-plugin
@@ -56,13 +56,13 @@ And then you can build the project and run the schematics:
 You can also pass through any general schematics options or options specific to our collection using flags:
 
 ```
-~/editor-plugin-schematics$ yarn twp-editor-plugin --dryRun=false
+~/editor-plugin-schematics$ yarn twp-editor-plugin --dry-run=false
 ~/editor-plugin-schematics$ yarn twp-editor-plugin --name="my awesome plugin"
 ```
 
 ### Running locally in Atlassian Frontend
 
-You can run your local version against the atlassian-frontend repo, if you want to check integration works correctly
+You can run your local version against the atlassian-frontend repo, if you want to check that the integration works correctly.
 
 First link via yarn to get the `editor-plugin` binary pointing to your local project:
 
@@ -70,13 +70,13 @@ First link via yarn to get the `editor-plugin` binary pointing to your local pro
 ~/editor-plugin-schematics$ yarn link
 ```
 
-And then in the `atlassian-frontend` repo you can just run:
+Then in the `atlassian-frontend` repo you can just run:
 
 ```
 ~/atlassian-frontend$ editor-plugin
 ```
 
-And it will point to your local `editor-plugin-schematics` project
+And it will point to your local `editor-plugin-schematics` project.
 
 ### Working with TypeScript AST
 

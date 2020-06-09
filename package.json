@@ -1,6 +1,6 @@
 {
   "name": "twp-editor-plugin-schematics",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo",
   "scripts": {
     "build": "tsc -p tsconfig.json",

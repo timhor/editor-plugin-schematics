@@ -19,6 +19,7 @@ import {
   importStylesToContentStyles,
   exportPluginFromIndex,
   importPluginToCreatePluginsList,
+  addMockToCreatePluginsListUnitTest,
   addPluginToRank,
   importPluginToEditorLabs,
 } from './codemods';
@@ -89,6 +90,7 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
 
     rules.push(exportPluginFromIndex(name));
     rules.push(importPluginToCreatePluginsList(name));
+    rules.push(addMockToCreatePluginsListUnitTest(name));
     rules.push(addPluginToRank(name));
 
     if (addToLabs) {

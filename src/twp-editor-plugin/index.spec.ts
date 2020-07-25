@@ -49,6 +49,17 @@ describe('twp-editor-plugin', () => {
       createPluginsListContent
     );
 
+    // populate source tree with sample create-plugins-list unit test contents
+    const createPluginsListUnitTestContent = fs
+      .readFileSync(
+        `${testingDependenciesPath}/create-plugins-list-unit-test.ts`
+      )
+      .toString('utf-8');
+    sourceTree.create(
+      `${createEditorPath}/__tests__/unit/create-plugins-list.ts`,
+      createPluginsListUnitTestContent
+    );
+
     // populate source tree with sample editor-labs default.tsx contents
     const editorLabsContent = fs
       .readFileSync(`${testingDependenciesPath}/default.tsx`)
@@ -861,6 +872,15 @@ describe('twp-editor-plugin', () => {
           "\n} from '../plugins';"
       );
       expect(fileContent).toContain('preset.add(nicePlugin)');
+    });
+    it('adds mock into create-plugins-list unit test', () => {
+      const tree = runSchematic({ name: 'nice' });
+      const fileContent = tree.readContent(
+        `${createEditorPath}/__tests__/unit/create-plugins-list.ts`
+      );
+      expect(fileContent).toContain(
+        '\n  existingPlugin: jest.fn(),' + '\n  nicePlugin: jest.fn(),'
+      );
     });
   });
 

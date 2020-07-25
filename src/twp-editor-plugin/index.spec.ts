@@ -34,6 +34,12 @@ describe('twp-editor-plugin', () => {
       .toString('utf-8');
     sourceTree.create(`${pluginBasePath}/index.ts`, pluginsIndexContent);
 
+    // populate source tree with sample plugins/rank.ts contents
+    const pluginsRankContent = fs
+      .readFileSync(`${testingDependenciesPath}/plugins-rank.ts`)
+      .toString('utf-8');
+    sourceTree.create(`${pluginBasePath}/rank.ts`, pluginsRankContent);
+
     // populate source tree with sample create-plugins-list.ts contents
     const createPluginsListContent = fs
       .readFileSync(`${testingDependenciesPath}/create-plugins-list.ts`)
@@ -834,6 +840,13 @@ describe('twp-editor-plugin', () => {
       );
       expect(fileContent).toContain(
         "export { default as nicePlugin } from './nice';"
+      );
+    });
+    it('adds plugin into rank.ts', () => {
+      const tree = runSchematic({ name: 'nice' });
+      const fileContent = tree.readContent(`${pluginBasePath}/rank.ts`);
+      expect(fileContent).toContain(
+        '  plugins: [' + "\n    'existing'," + "\n    'nice'," + '\n  ],'
       );
     });
     it('adds import and preset into create-plugins-list.ts', () => {

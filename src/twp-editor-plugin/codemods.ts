@@ -18,6 +18,7 @@ import {
   getFunctionReturnStatement,
   getVariableDeclarationStatement,
   getTemplateExpression,
+  getPropertyAssignmentArrayClosingBracket,
 } from './utils';
 
 export function exportPluginFromIndex(pluginName: string): Rule {
@@ -145,6 +146,30 @@ export function importStylesToContentStyles(pluginName: string): Rule {
     recorder.insertRight(
       templateExpression.pos + templateExpression.getText().length - 1,
       '\n  ${' + strings.camelize(pluginName) + 'Styles}\n'
+    );
+
+    tree.commitUpdate(recorder);
+    return tree;
+  };
+}
+
+export function addPluginToRank(pluginName: string): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const path = `${pluginBasePath}/rank.ts`;
+    const nodes = getTsNodes(tree, path);
+    const recorder = tree.beginUpdate(path);
+
+    const pluginRankClosingBracket = getPropertyAssignmentArrayClosingBracket(
+      nodes,
+      'plugins'
+    );
+    if (!pluginRankClosingBracket) {
+      throw new SchematicsException(`Error locating plugins array in ${path}`);
+    }
+
+    recorder.insertLeft(
+      pluginRankClosingBracket.pos,
+      `\n    '${strings.camelize(pluginName)}',`
     );
 
     tree.commitUpdate(recorder);

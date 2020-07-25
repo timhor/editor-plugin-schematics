@@ -81,5 +81,15 @@ export const getFunctionReturnStatement = (
     ?.getChildren()
     .find((node: ts.Node) => node.kind === ts.SyntaxKind.ReturnStatement);
 
+export const getVariableDeclarationStatement = (
+  nodes: ts.Node[],
+  variableName: string
+) =>
+  nodes.find(
+    (node: ts.Node) =>
+      node.kind === ts.SyntaxKind.VariableStatement &&
+      node.getText().includes(variableName)
+  );
+
 export const getTemplateExpression = (nodes: ts.Node[]) =>
   nodes.find((node: ts.Node) => node.kind === ts.SyntaxKind.TemplateExpression);

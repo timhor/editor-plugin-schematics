@@ -836,7 +836,7 @@ describe('twp-editor-plugin', () => {
         "export { default as nicePlugin } from './nice';"
       );
     });
-    it('adds import and function call into create-plugins-list.ts', () => {
+    it('adds import and preset into create-plugins-list.ts', () => {
       const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(
         `${createEditorPath}/create-plugins-list.ts`
@@ -847,7 +847,7 @@ describe('twp-editor-plugin', () => {
           '\n  nicePlugin,' +
           "\n} from '../plugins';"
       );
-      expect(fileContent).toContain('plugins.push(nicePlugin())');
+      expect(fileContent).toContain('preset.add(nicePlugin)');
     });
   });
 

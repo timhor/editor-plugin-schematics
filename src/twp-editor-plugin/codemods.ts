@@ -16,6 +16,7 @@ import {
   getImportClosingBrace,
   getFinalImportStatementSemicolon,
   getFunctionReturnStatement,
+  getVariableDeclarationStatement,
   getTemplateExpression,
 } from './utils';
 
@@ -54,19 +55,19 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
       `\n  ${strings.camelize(pluginName)}Plugin,`
     );
 
-    const pluginReturnStatement = getFunctionReturnStatement(
+    const excludesDeclarationStatement = getVariableDeclarationStatement(
       nodes,
-      'createPluginsList'
+      'excludes'
     );
-    if (!pluginReturnStatement) {
+    if (!excludesDeclarationStatement) {
       throw new SchematicsException(
-        `Error locating plugin return statement in ${path}`
+        `Error locating 'excludes' declaration statement in ${path}`
       );
     }
 
     recorder.insertLeft(
-      pluginReturnStatement.pos,
-      `\n\n  plugins.push(${strings.camelize(pluginName)}Plugin());`
+      excludesDeclarationStatement.pos,
+      `\n\n  preset.add(${strings.camelize(pluginName)}Plugin);`
     );
 
     tree.commitUpdate(recorder);

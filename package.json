@@ -8,10 +8,12 @@
     "test": "npm run build && jest",
     "simulate:local:clean": "rm -rf packages/",
     "simulate:local:setup:pi": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/testing-dependencies/plugins-index.ts packages/editor/editor-core/src/plugins/index.ts",
+    "simulate:local:setup:pr": "cp src/twp-editor-plugin/files/testing-dependencies/plugins-rank.ts packages/editor/editor-core/src/plugins/rank.ts",
     "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/testing-dependencies/create-plugins-list.ts packages/editor/editor-core/src/create-editor/create-plugins-list.ts",
+    "simulate:local:setup:cplut": "mkdir -p packages/editor/editor-core/src/create-editor/__tests__/unit && cp src/twp-editor-plugin/files/testing-dependencies/create-plugins-list-unit-test.ts packages/editor/editor-core/src/create-editor/__tests__/unit/create-plugins-list.ts",
     "simulate:local:setup:csi": "mkdir -p packages/editor/editor-core/src/ui/ContentStyles && cp src/twp-editor-plugin/files/testing-dependencies/ContentStyles-index.ts packages/editor/editor-core/src/ui/ContentStyles/index.ts",
     "simulate:local:setup:el": "mkdir -p packages/editor/editor-core/src/labs/next/presets && cp src/twp-editor-plugin/files/testing-dependencies/default.tsx packages/editor/editor-core/src/labs/next/presets/default.tsx",
-    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:cpl && npm run simulate:local:setup:csi && npm run simulate:local:setup:el",
+    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:pr && npm run simulate:local:setup:cpl && npm run simulate:local:setup:cplut && npm run simulate:local:setup:csi && npm run simulate:local:setup:el",
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [

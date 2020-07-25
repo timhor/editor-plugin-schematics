@@ -8,7 +8,7 @@ CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-fronte
 
 ## License
 
-Apache 2.0, see [LICENSE](LICENSE).
+Apache 2.0, see [LICENSE](https://github.com/timhor/editor-plugin-schematics/blob/master/LICENSE).
 
 ## Contributing
 

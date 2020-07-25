@@ -10,14 +10,15 @@ import { ScrollGutterPluginOptions } from '../plugins/base/pm-plugins/scroll-gut
 import { createFeatureFlagsFromProps } from '../plugins/feature-flags-context/feature-flags-from-props';
 import { PrivateCollabEditOptions } from '../plugins/collab-edit/types';
 import { BlockTypePluginOptions } from '../plugins/block-type/types';
-
-export function getDefaultPluginsList(props: EditorProps): EditorPlugin[] {
-  return [];
-}
+import { createDefaultPreset } from '../labs/next/presets/default';
 
 function getScrollGutterOptions(
   props: EditorProps,
 ): ScrollGutterPluginOptions | undefined {}
+
+export function getDefaultPresetOptionsFromEditorProps(props: EditorProps) {
+  return {};
+}
 
 /**
  * Maps EditorProps to EditorPlugins
@@ -27,11 +28,15 @@ export default function createPluginsList(
   prevProps?: EditorProps,
   createAnalyticsEvent?: CreateUIAnalyticsEvent,
 ): EditorPlugin[] {
-  const plugins = getDefaultPluginsList(props);
+  const preset = createDefaultPreset(
+    getDefaultPresetOptionsFromEditorProps(props),
+  );
 
   if (props.allowExisting) {
-    plugins.push(existingPlugin());
+    preset.add(existingPlugin);
   }
 
-  return plugins;
+  const excludes = new Set<string>();
+
+  return preset.getEditorPlugins(excludes);
 }

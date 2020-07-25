@@ -16,7 +16,9 @@ import {
   getImportClosingBrace,
   getFinalImportStatementSemicolon,
   getFunctionReturnStatement,
+  getVariableDeclarationStatement,
   getTemplateExpression,
+  getPropertyAssignmentArrayClosingBracket,
 } from './utils';
 
 export function exportPluginFromIndex(pluginName: string): Rule {
@@ -54,19 +56,45 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
       `\n  ${strings.camelize(pluginName)}Plugin,`
     );
 
-    const pluginReturnStatement = getFunctionReturnStatement(
+    const excludesDeclarationStatement = getVariableDeclarationStatement(
       nodes,
-      'createPluginsList'
+      'excludes'
     );
-    if (!pluginReturnStatement) {
+    if (!excludesDeclarationStatement) {
       throw new SchematicsException(
-        `Error locating plugin return statement in ${path}`
+        `Error locating 'excludes' declaration statement in ${path}`
       );
     }
 
     recorder.insertLeft(
-      pluginReturnStatement.pos,
-      `\n\n  plugins.push(${strings.camelize(pluginName)}Plugin());`
+      excludesDeclarationStatement.pos,
+      `\n\n  preset.add(${strings.camelize(pluginName)}Plugin);`
+    );
+
+    tree.commitUpdate(recorder);
+    return tree;
+  };
+}
+
+export function addMockToCreatePluginsListUnitTest(pluginName: string): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const path = `${createEditorPath}/__tests__/unit/create-plugins-list.ts`;
+    const nodes = getTsNodes(tree, path);
+    const recorder = tree.beginUpdate(path);
+
+    const mockPluginsDeclaration = getVariableDeclarationStatement(
+      nodes,
+      'mockPlugins'
+    );
+    if (!mockPluginsDeclaration) {
+      throw new SchematicsException(
+        `Error locating mock plugins declaration in ${path}`
+      );
+    }
+
+    recorder.insertLeft(
+      mockPluginsDeclaration.end - 2, // -2 to get the position before };
+      `  ${strings.camelize(pluginName)}Plugin: jest.fn(),\n`
     );
 
     tree.commitUpdate(recorder);
@@ -144,6 +172,30 @@ export function importStylesToContentStyles(pluginName: string): Rule {
     recorder.insertRight(
       templateExpression.pos + templateExpression.getText().length - 1,
       '\n  ${' + strings.camelize(pluginName) + 'Styles}\n'
+    );
+
+    tree.commitUpdate(recorder);
+    return tree;
+  };
+}
+
+export function addPluginToRank(pluginName: string): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const path = `${pluginBasePath}/rank.ts`;
+    const nodes = getTsNodes(tree, path);
+    const recorder = tree.beginUpdate(path);
+
+    const pluginRankClosingBracket = getPropertyAssignmentArrayClosingBracket(
+      nodes,
+      'plugins'
+    );
+    if (!pluginRankClosingBracket) {
+      throw new SchematicsException(`Error locating plugins array in ${path}`);
+    }
+
+    recorder.insertLeft(
+      pluginRankClosingBracket.pos,
+      `\n    '${strings.camelize(pluginName)}',`
     );
 
     tree.commitUpdate(recorder);

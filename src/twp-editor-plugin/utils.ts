@@ -81,5 +81,38 @@ export const getFunctionReturnStatement = (
     ?.getChildren()
     .find((node: ts.Node) => node.kind === ts.SyntaxKind.ReturnStatement);
 
+export const getVariableDeclarationStatement = (
+  nodes: ts.Node[],
+  variableName: string
+) =>
+  nodes.find(
+    (node: ts.Node) =>
+      node.kind === ts.SyntaxKind.VariableStatement &&
+      node.getText().includes(variableName)
+  );
+
+// Example:
+// export default {
+//   plugins: [
+//     'pluginA',
+//     'pluginB',
+//     'pluginC',
+//   ] <----
+// }
+export const getPropertyAssignmentArrayClosingBracket = (
+  nodes: ts.Node[],
+  identifier: string
+) =>
+  nodes
+    .find(
+      (node: ts.Node) =>
+        node.kind === ts.SyntaxKind.PropertyAssignment &&
+        node.getText().startsWith(identifier)
+    )
+    ?.getChildren()
+    .find((node: ts.Node) => node.kind === ts.SyntaxKind.ArrayLiteralExpression)
+    ?.getChildren()
+    .find((node: ts.Node) => node.kind === ts.SyntaxKind.CloseBracketToken);
+
 export const getTemplateExpression = (nodes: ts.Node[]) =>
   nodes.find((node: ts.Node) => node.kind === ts.SyntaxKind.TemplateExpression);

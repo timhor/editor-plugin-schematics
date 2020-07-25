@@ -34,6 +34,12 @@ describe('twp-editor-plugin', () => {
       .toString('utf-8');
     sourceTree.create(`${pluginBasePath}/index.ts`, pluginsIndexContent);
 
+    // populate source tree with sample plugins/rank.ts contents
+    const pluginsRankContent = fs
+      .readFileSync(`${testingDependenciesPath}/plugins-rank.ts`)
+      .toString('utf-8');
+    sourceTree.create(`${pluginBasePath}/rank.ts`, pluginsRankContent);
+
     // populate source tree with sample create-plugins-list.ts contents
     const createPluginsListContent = fs
       .readFileSync(`${testingDependenciesPath}/create-plugins-list.ts`)
@@ -41,6 +47,17 @@ describe('twp-editor-plugin', () => {
     sourceTree.create(
       `${createEditorPath}/create-plugins-list.ts`,
       createPluginsListContent
+    );
+
+    // populate source tree with sample create-plugins-list unit test contents
+    const createPluginsListUnitTestContent = fs
+      .readFileSync(
+        `${testingDependenciesPath}/create-plugins-list-unit-test.ts`
+      )
+      .toString('utf-8');
+    sourceTree.create(
+      `${createEditorPath}/__tests__/unit/create-plugins-list.ts`,
+      createPluginsListUnitTestContent
     );
 
     // populate source tree with sample editor-labs default.tsx contents
@@ -836,7 +853,14 @@ describe('twp-editor-plugin', () => {
         "export { default as nicePlugin } from './nice';"
       );
     });
-    it('adds import and function call into create-plugins-list.ts', () => {
+    it('adds plugin into rank.ts', () => {
+      const tree = runSchematic({ name: 'nice' });
+      const fileContent = tree.readContent(`${pluginBasePath}/rank.ts`);
+      expect(fileContent).toContain(
+        '  plugins: [' + "\n    'existing'," + "\n    'nice'," + '\n  ],'
+      );
+    });
+    it('adds import and preset into create-plugins-list.ts', () => {
       const tree = runSchematic({ name: 'nice' });
       const fileContent = tree.readContent(
         `${createEditorPath}/create-plugins-list.ts`
@@ -847,7 +871,16 @@ describe('twp-editor-plugin', () => {
           '\n  nicePlugin,' +
           "\n} from '../plugins';"
       );
-      expect(fileContent).toContain('plugins.push(nicePlugin())');
+      expect(fileContent).toContain('preset.add(nicePlugin)');
+    });
+    it('adds mock into create-plugins-list unit test', () => {
+      const tree = runSchematic({ name: 'nice' });
+      const fileContent = tree.readContent(
+        `${createEditorPath}/__tests__/unit/create-plugins-list.ts`
+      );
+      expect(fileContent).toContain(
+        '\n  existingPlugin: jest.fn(),' + '\n  nicePlugin: jest.fn(),'
+      );
     });
   });
 

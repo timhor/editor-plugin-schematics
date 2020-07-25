@@ -16,9 +16,11 @@ import { normalize } from 'path';
 import { pluginBasePath } from './constants';
 import { createTestFolders } from './utils';
 import {
+  importStylesToContentStyles,
   exportPluginFromIndex,
   importPluginToCreatePluginsList,
-  importStylesToContentStyles,
+  addMockToCreatePluginsListUnitTest,
+  addPluginToRank,
   importPluginToEditorLabs,
 } from './codemods';
 
@@ -88,6 +90,8 @@ export function twpEditorPlugin(options: TwpEditorPluginOptions): Rule {
 
     rules.push(exportPluginFromIndex(name));
     rules.push(importPluginToCreatePluginsList(name));
+    rules.push(addMockToCreatePluginsListUnitTest(name));
+    rules.push(addPluginToRank(name));
 
     if (addToLabs) {
       rules.push(importPluginToEditorLabs(name));

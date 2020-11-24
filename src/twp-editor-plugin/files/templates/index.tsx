@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { EditorPlugin } from '../../types';
 import { createPlugin } from './pm-plugins/main';<% if (useKeymap) { %>
 import keymapPlugin from './pm-plugins/keymap';<% } %><% if (useInputRules) { %>

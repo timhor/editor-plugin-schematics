@@ -4,5 +4,4 @@ export interface TwpEditorPluginOptions {
   useStyles?: boolean;
   useKeymap?: boolean;
   useInputRules?: boolean;
-  addToLabs?: boolean;
 }

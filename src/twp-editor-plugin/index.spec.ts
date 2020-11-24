@@ -10,7 +10,6 @@ import {
   collectionPath,
   testingDependenciesPath,
   contentStylesPath,
-  editorLabsPath,
 } from './constants';
 import { TwpEditorPluginOptions } from './types';
 
@@ -59,12 +58,6 @@ describe('twp-editor-plugin', () => {
       `${createEditorPath}/__tests__/unit/create-plugins-list.ts`,
       createPluginsListUnitTestContent
     );
-
-    // populate source tree with sample editor-labs default.tsx contents
-    const editorLabsContent = fs
-      .readFileSync(`${testingDependenciesPath}/default.tsx`)
-      .toString('utf-8');
-    sourceTree.create(`${editorLabsPath}/default.tsx`, editorLabsContent);
 
     const tree = runner.runSchematic('twp-editor-plugin', options, sourceTree);
     return tree;
@@ -881,17 +874,6 @@ describe('twp-editor-plugin', () => {
       expect(fileContent).toContain(
         '\n  existingPlugin: jest.fn(),' + '\n  nicePlugin: jest.fn(),'
       );
-    });
-  });
-
-  describe('codemods for new labs architecture', () => {
-    it('adds import and preset into default.tsx', () => {
-      const tree = runSchematic({ name: 'nice' });
-      const fileContent = tree.readContent(`${editorLabsPath}/default.tsx`);
-      expect(fileContent).toContain(
-        "import nicePlugin from '../../../plugins/nice';"
-      );
-      expect(fileContent).toContain('preset.add(nicePlugin);');
     });
   });
 });

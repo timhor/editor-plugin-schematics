@@ -9,13 +9,11 @@ import {
   pluginBasePath,
   createEditorPath,
   contentStylesPath,
-  editorLabsPath,
 } from './constants';
 import {
   getTsNodes,
   getImportClosingBrace,
   getFinalImportStatementSemicolon,
-  getFunctionReturnStatement,
   getVariableDeclarationStatement,
   getTemplateExpression,
   getPropertyAssignmentArrayClosingBracket,
@@ -95,46 +93,6 @@ export function addMockToCreatePluginsListUnitTest(pluginName: string): Rule {
     recorder.insertLeft(
       mockPluginsDeclaration.end - 2, // -2 to get the position before };
       `  ${strings.camelize(pluginName)}Plugin: jest.fn(),\n`
-    );
-
-    tree.commitUpdate(recorder);
-    return tree;
-  };
-}
-
-export function importPluginToEditorLabs(pluginName: string): Rule {
-  return (tree: Tree, _context: SchematicContext) => {
-    const path = `${editorLabsPath}/default.tsx`;
-    const nodes = getTsNodes(tree, path);
-    const recorder = tree.beginUpdate(path);
-
-    const finalImportStatementSemicolon = getFinalImportStatementSemicolon(
-      nodes
-    );
-    if (!finalImportStatementSemicolon) {
-      throw new SchematicsException(`Error locating imports in ${path}`);
-    }
-
-    recorder.insertRight(
-      finalImportStatementSemicolon.pos + 1,
-      `\nimport ${strings.camelize(
-        pluginName
-      )}Plugin from '../../../plugins/${strings.dasherize(pluginName)}';`
-    );
-
-    const pluginReturnStatement = getFunctionReturnStatement(
-      nodes,
-      'useDefaultPreset'
-    );
-    if (!pluginReturnStatement) {
-      throw new SchematicsException(
-        `Error locating plugin return statement in ${path}`
-      );
-    }
-
-    recorder.insertLeft(
-      pluginReturnStatement.pos,
-      `\n  preset.add(${strings.camelize(pluginName)}Plugin);`
     );
 
     tree.commitUpdate(recorder);

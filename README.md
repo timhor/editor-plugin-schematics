@@ -86,6 +86,8 @@ Then in the `atlassian-frontend` repo you can just run:
 
 And it will point to your local `editor-plugin-schematics` project.
 
+Remember to build the project (`yarn build` in `editor-plugin-schematics`) after you make changes.
+
 ### Working with TypeScript AST
 
 - <https://ts-ast-viewer.com/#>

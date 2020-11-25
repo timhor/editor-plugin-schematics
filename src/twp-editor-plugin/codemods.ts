@@ -74,32 +74,6 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
   };
 }
 
-export function addMockToCreatePluginsListUnitTest(pluginName: string): Rule {
-  return (tree: Tree, _context: SchematicContext) => {
-    const path = `${createEditorPath}/__tests__/unit/create-plugins-list.ts`;
-    const nodes = getTsNodes(tree, path);
-    const recorder = tree.beginUpdate(path);
-
-    const mockPluginsDeclaration = getVariableDeclarationStatement(
-      nodes,
-      'mockPlugins'
-    );
-    if (!mockPluginsDeclaration) {
-      throw new SchematicsException(
-        `Error locating mock plugins declaration in ${path}`
-      );
-    }
-
-    recorder.insertLeft(
-      mockPluginsDeclaration.end - 2, // -2 to get the position before };
-      `  ${strings.camelize(pluginName)}Plugin: jest.fn(),\n`
-    );
-
-    tree.commitUpdate(recorder);
-    return tree;
-  };
-}
-
 export function importStylesToContentStyles(pluginName: string): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const path = `${contentStylesPath}/index.ts`;

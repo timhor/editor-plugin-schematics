@@ -20,10 +20,10 @@ describe('twp-editor-plugin', () => {
 
     // populate source tree with sample ContentStyles/index.ts contents
     const contentStylesIndexContent = fs
-      .readFileSync(`${testingDependenciesPath}/ContentStyles-index.ts`)
+      .readFileSync(`${testingDependenciesPath}/ContentStyles-index.tsx`)
       .toString('utf-8');
     sourceTree.create(
-      `${contentStylesPath}/index.ts`,
+      `${contentStylesPath}/index.tsx`,
       contentStylesIndexContent
     );
 
@@ -67,7 +67,7 @@ describe('twp-editor-plugin', () => {
       });
       it('adds import into ContentStyles', () => {
         const tree = runSchematic({ name: 'nice' });
-        const fileContent = tree.readContent(`${contentStylesPath}/index.ts`);
+        const fileContent = tree.readContent(`${contentStylesPath}/index.tsx`);
         expect(fileContent).toContain(
           "import { niceStyles } from '../../plugins/nice/styles';"
         );
@@ -84,7 +84,7 @@ describe('twp-editor-plugin', () => {
 
       it("doesn't add import into ContentStyles", () => {
         const tree = runSchematic({ name: 'nice', useStyles: false });
-        const fileContent = tree.readContent(`${contentStylesPath}/index.ts`);
+        const fileContent = tree.readContent(`${contentStylesPath}/index.tsx`);
         expect(fileContent).not.toContain(
           "import { niceStyles } from '../../plugins/nice/styles';"
         );

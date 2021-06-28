@@ -1,4 +1,4 @@
-// simulates packages/editor/editor-core/src/ui/ContentStyles/index.ts
+// simulates packages/editor/editor-core/src/ui/ContentStyles/index.tsx
 
 import styled from 'styled-components';
 import { HTMLAttributes, ComponentClass } from 'react';

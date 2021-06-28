@@ -76,7 +76,7 @@ export function importPluginToCreatePluginsList(pluginName: string): Rule {
 
 export function importStylesToContentStyles(pluginName: string): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const path = `${contentStylesPath}/index.ts`;
+    const path = `${contentStylesPath}/index.tsx`;
     const nodes = getTsNodes(tree, path);
     const recorder = tree.beginUpdate(path);
 

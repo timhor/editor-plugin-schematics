@@ -537,7 +537,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
             "import { nicePluginKey } from '../plugin-key';"
@@ -572,7 +572,7 @@ describe('twp-editor-plugin', () => {
             'export const createPlugin = ({' +
               '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
-              '\n  new Plugin({' +
+              '\n  new SafePlugin({' +
               '\n    key: nicePluginKey,' +
               '\n    state: createPluginState(dispatch, initialState),' +
               '\n    props: { /* props like nodeViews or decorations */ },' +
@@ -597,7 +597,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
             "import { nicePluginKey } from '../plugin-key';"
@@ -632,7 +632,7 @@ describe('twp-editor-plugin', () => {
             'export const createPlugin = ({' +
               '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
-              '\n  new Plugin({' +
+              '\n  new SafePlugin({' +
               '\n    key: nicePluginKey,' +
               '\n    props: { /* props like nodeViews or decorations */ },' +
               '\n  });'
@@ -688,7 +688,7 @@ describe('twp-editor-plugin', () => {
             "import { keymap } from 'prosemirror-keymap';"
           );
           expect(fileContent).toContain(
-            "import { bindKeymapWithCommand } from '../../keymaps';"
+            "import { bindKeymapWithCommand } from '../../../keymaps';"
           );
         });
 
@@ -706,7 +706,7 @@ describe('twp-editor-plugin', () => {
               '\n   *  bindKeymapWithCommand(keymap, command, list);' +
               '\n   */' +
               '\n' +
-              '\n  return keymap(list);' +
+              '\n  return keymap(list) as SafePlugin;' +
               '\n}'
           );
         });
@@ -745,13 +745,13 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
           );
           expect(fileContent).toContain(
-            "import { InputRule } from 'prosemirror-inputrules';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { InputRuleWrapper } from '@atlaskit/prosemirror-input-rules';"
           );
           expect(fileContent).toContain(
-            "import { createInputRule, instrumentedInputRule } from '../../../utils/input-rules';"
+            "import { createRule, createPlugin } from '../../../utils/input-rules';"
           );
         });
 
@@ -761,17 +761,17 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
           );
           expect(fileContent).toContain(
-            'function inputRulesPlugin(schema: Schema): Plugin | undefined {' +
-              '\n  const rules: InputRule[] = [];' +
+            'function inputRulesPlugin(schema: Schema): SafePlugin | undefined {' +
+              '\n  const rules: InputRuleWrapper[] = [];' +
               '\n' +
               '\n  /**' +
-              '\n   * Bind autoformatting rules to Prosemirror transactions using createInputRule helper:' +
-              '\n   *  const rule = createInputRule(regex, (state, match, start, end) => tr);' +
+              '\n   * Bind autoformatting rules to Prosemirror transactions using createRule helper:' +
+              '\n   *  const rule = createRule(regex, (state, matchResult, start, end) => tr);' +
               '\n   *  rules.push(rule);' +
               '\n   */' +
               '\n' +
               '\n  if (rules.length > 0) {' +
-              "\n    return instrumentedInputRule('nice', { rules });" +
+              "\n    return createPlugin('nice', rules);" +
               '\n  }' +
               '\n' +
               '\n  return;' +

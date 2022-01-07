@@ -3,16 +3,17 @@
   "version": "1.2.2",
   "description": "CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo",
   "scripts": {
+    "prepare": "husky install",
     "build": "tsc -p tsconfig.json",
-    "twp-editor-plugin": "npm run build && schematics .:twp-editor-plugin",
-    "test": "npm run build && jest",
+    "test": "yarn build && jest",
+    "twp-editor-plugin": "yarn build && schematics .:twp-editor-plugin",
     "simulate:local:clean": "rm -rf packages/",
     "simulate:local:setup:pi": "mkdir -p packages/editor/editor-core/src/plugins && cp src/twp-editor-plugin/files/testing-dependencies/plugins-index.ts packages/editor/editor-core/src/plugins/index.ts",
     "simulate:local:setup:pr": "cp src/twp-editor-plugin/files/testing-dependencies/plugins-rank.ts packages/editor/editor-core/src/plugins/rank.ts",
     "simulate:local:setup:cpl": "mkdir -p packages/editor/editor-core/src/create-editor && cp src/twp-editor-plugin/files/testing-dependencies/create-plugins-list.ts packages/editor/editor-core/src/create-editor/create-plugins-list.ts",
     "simulate:local:setup:csi": "mkdir -p packages/editor/editor-core/src/ui/ContentStyles && cp src/twp-editor-plugin/files/testing-dependencies/ContentStyles-index.tsx packages/editor/editor-core/src/ui/ContentStyles/index.tsx",
-    "simulate:local": "npm run simulate:local:clean && npm run simulate:local:setup:pi && npm run simulate:local:setup:pr && npm run simulate:local:setup:cpl && npm run simulate:local:setup:csi",
-    "prepublishOnly": "npm run build && npm test"
+    "simulate:local": "yarn simulate:local:clean && yarn simulate:local:setup:pi && yarn simulate:local:setup:pr && yarn simulate:local:setup:cpl && yarn simulate:local:setup:csi",
+    "prepublishOnly": "yarn build && npm test"
   },
   "keywords": [
     "Atlassian",
@@ -41,15 +42,10 @@
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/node": "^12.11.1",
-    "husky": "^4.2.5",
+    "husky": "^7.0.0",
     "jest": "^26.0.1",
-    "lint-staged": "^10.2.7",
-    "prettier": "^2.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "lint-staged": "^12.1.5",
+    "prettier": "^2.5.1"
   },
   "lint-staged": {
     "*.{ts,tsx,html,css,md,json}": "prettier --write"

@@ -1,5 +1,3 @@
-[![](https://circleci.com/gh/timhor/editor-plugin-schematics.svg?style=svg)](https://app.circleci.com/pipelines/github/timhor/editor-plugin-schematics)
-
 # TWP Editor Plugin Schematics
 
 CLI tool to automate scaffolding a new TWP editor plugin in the atlassian-frontend repo, as well as running codemods to update necessary files.

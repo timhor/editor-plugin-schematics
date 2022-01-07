@@ -1,9 +1,9 @@
+import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';
 import { InputRule } from 'prosemirror-inputrules';
-import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { createInputRule, instrumentedInputRule } from '../../../utils/input-rules';
 
-function inputRulesPlugin(schema: Schema): Plugin | undefined {
+function inputRulesPlugin(schema: Schema): SafePlugin | undefined {
   const rules: InputRule[] = [];
 
   /**

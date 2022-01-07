@@ -537,7 +537,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
             "import { nicePluginKey } from '../plugin-key';"
@@ -572,7 +572,7 @@ describe('twp-editor-plugin', () => {
             'export const createPlugin = ({' +
               '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
-              '\n  new Plugin({' +
+              '\n  new SafePlugin({' +
               '\n    key: nicePluginKey,' +
               '\n    state: createPluginState(dispatch, initialState),' +
               '\n    props: { /* props like nodeViews or decorations */ },' +
@@ -597,7 +597,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/main.ts`
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
             "import { nicePluginKey } from '../plugin-key';"
@@ -632,7 +632,7 @@ describe('twp-editor-plugin', () => {
             'export const createPlugin = ({' +
               '\n  dispatch,' +
               '\n}: PMPluginFactoryParams) =>' +
-              '\n  new Plugin({' +
+              '\n  new SafePlugin({' +
               '\n    key: nicePluginKey,' +
               '\n    props: { /* props like nodeViews or decorations */ },' +
               '\n  });'
@@ -706,7 +706,7 @@ describe('twp-editor-plugin', () => {
               '\n   *  bindKeymapWithCommand(keymap, command, list);' +
               '\n   */' +
               '\n' +
-              '\n  return keymap(list);' +
+              '\n  return keymap(list) as SafePlugin;' +
               '\n}'
           );
         });
@@ -748,7 +748,7 @@ describe('twp-editor-plugin', () => {
             "import { InputRule } from 'prosemirror-inputrules';"
           );
           expect(fileContent).toContain(
-            "import { Plugin } from 'prosemirror-state';"
+            "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
             "import { createInputRule, instrumentedInputRule } from '../../../utils/input-rules';"
@@ -761,7 +761,7 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
           );
           expect(fileContent).toContain(
-            'function inputRulesPlugin(schema: Schema): Plugin | undefined {' +
+            'function inputRulesPlugin(schema: Schema): SafePlugin | undefined {' +
               '\n  const rules: InputRule[] = [];' +
               '\n' +
               '\n  /**' +

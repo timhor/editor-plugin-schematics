@@ -1,4 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
+import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';
 import { bindKeymapWithCommand } from '../../keymaps';
 
 function keymapPlugin() {
@@ -9,7 +10,7 @@ function keymapPlugin() {
    *  bindKeymapWithCommand(keymap, command, list);
    */
 
-  return keymap(list);
+  return keymap(list) as SafePlugin;
 }
 
 export default keymapPlugin;

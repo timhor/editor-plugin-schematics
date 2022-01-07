@@ -688,7 +688,7 @@ describe('twp-editor-plugin', () => {
             "import { keymap } from 'prosemirror-keymap';"
           );
           expect(fileContent).toContain(
-            "import { bindKeymapWithCommand } from '../../keymaps';"
+            "import { bindKeymapWithCommand } from '../../../keymaps';"
           );
         });
 
@@ -745,13 +745,13 @@ describe('twp-editor-plugin', () => {
             `${pluginBasePath}/nice/pm-plugins/input-rules.ts`
           );
           expect(fileContent).toContain(
-            "import { InputRule } from 'prosemirror-inputrules';"
-          );
-          expect(fileContent).toContain(
             "import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';"
           );
           expect(fileContent).toContain(
-            "import { createInputRule, instrumentedInputRule } from '../../../utils/input-rules';"
+            "import { InputRuleWrapper } from '@atlaskit/prosemirror-input-rules';"
+          );
+          expect(fileContent).toContain(
+            "import { createRule, createPlugin } from '../../../utils/input-rules';"
           );
         });
 
@@ -762,16 +762,16 @@ describe('twp-editor-plugin', () => {
           );
           expect(fileContent).toContain(
             'function inputRulesPlugin(schema: Schema): SafePlugin | undefined {' +
-              '\n  const rules: InputRule[] = [];' +
+              '\n  const rules: InputRuleWrapper[] = [];' +
               '\n' +
               '\n  /**' +
-              '\n   * Bind autoformatting rules to Prosemirror transactions using createInputRule helper:' +
-              '\n   *  const rule = createInputRule(regex, (state, match, start, end) => tr);' +
+              '\n   * Bind autoformatting rules to Prosemirror transactions using createRule helper:' +
+              '\n   *  const rule = createRule(regex, (state, matchResult, start, end) => tr);' +
               '\n   *  rules.push(rule);' +
               '\n   */' +
               '\n' +
               '\n  if (rules.length > 0) {' +
-              "\n    return instrumentedInputRule('nice', { rules });" +
+              "\n    return createPlugin('nice', rules);" +
               '\n  }' +
               '\n' +
               '\n  return;' +

@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 import { SafePlugin } from '@atlaskit/editor-common/safe-plugin';
-import { bindKeymapWithCommand } from '../../keymaps';
+import { bindKeymapWithCommand } from '../../../keymaps';
 
 function keymapPlugin() {
   const list = {};
